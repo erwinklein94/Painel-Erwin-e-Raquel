@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Financeiro Klein</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#e8f0fb;color:#1a2a4a;font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+#root{padding:12px;max-width:720px;margin:0 auto}
+button{cursor:pointer;transition:all .2s}button:hover{opacity:.85}
+::-webkit-scrollbar{height:4px;width:4px}::-webkit-scrollbar-track{background:#c8d8f0;border-radius:4px}::-webkit-scrollbar-thumb{background:#2d6bc4;border-radius:4px}
+.sep{height:1px;background:linear-gradient(90deg,transparent,#2d6bc4,transparent);margin:16px 0}
+input[type=number]{background:#f0f5ff;border:1.5px solid #b8cef0;border-radius:8px;color:#1a2a4a;padding:10px 12px;font-size:16px;font-weight:600;width:100%;font-family:'Inter',inherit;transition:border-color .2s,box-shadow .2s;-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]:focus{outline:none;border-color:#2d6bc4;box-shadow:0 0 0 3px #2d6bc430}
+input[type=number].accent-green:focus{border-color:#00b894;box-shadow:0 0 0 3px #00b89430}
+input[type=number].accent-pink:focus{border-color:#0984e3;box-shadow:0 0 0 3px #0984e330}
+input[type=number].accent-amber:focus{border-color:#00cec9;box-shadow:0 0 0 3px #00cec930}
+input[type=number].accent-violet:focus{border-color:#6c5ce7;box-shadow:0 0 0 3px #6c5ce730}
+input[type=number].accent-red:focus{border-color:#d63031;box-shadow:0 0 0 3px #d6303130}
+.inp-label{font-size:9px;color:#5a7ab0;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:4px}
+.inp-hint{font-size:8px;color:#7a9ac0;margin-top:2px}
+.inp-group{margin-bottom:12px}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.inp-row{grid-template-columns:1fr}}
+.live-dot{width:6px;height:6px;background:#00b894;border-radius:50%;display:inline-block;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease}
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #d0e0f5;box-shadow:0 2px 8px #2d6bc415}
+.card-blue{background:linear-gradient(135deg,#1a3a6c,#2d6bc4);color:#fff;border:none}
+.card-teal{background:linear-gradient(135deg,#006d6a,#00b894);color:#fff;border:none}
+.card-red{background:linear-gradient(135deg,#8b0000,#d63031);color:#fff;border:none}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+
+<script type="text/babel">
+const{useState,useMemo,useRef,useEffect}=React;
+
+const MP=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const mk=(y,m)=>y*12+m;
+const fk=k=>[Math.floor(k/12),k%12];
+const fm=(y,m)=>`${MP[m]}/${y}`;
+const R$=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+const S1=[1296.34,1279.43,1262.18,1245.72,1228.93,1212.36,1196.55,1180.42,1165.02,1149.32,1133.83,1120.01,1104.92,1090.50,1075.80,1061.77,1047.46,1033.34,1019.86,1006.11,992.99,979.60,966.40,954.21,941.35,929.07,916.55,904.59,892.40,880.37,868.88,857.17,845.99,834.59,823.34,813.31,802.34,791.88,781.20,771.01,760.62,750.37,740.58,730.60,721.07,711.35,701.76,693.21,683.87,674.94,665.85,657.16,648.30,639.57,631.22,622.71,614.59,606.31,598.13,590.85,582.88,575.28,567.53,560.12,552.57,545.12,538.01,530.76,523.84,516.78,509.81,503.38,496.60,490.12,483.51,477.20,470.77,464.43];
+const S2=[72.59,71.37,70.12,68.94,67.74,66.56,65.43,64.29,63.21,62.11,61.02,60.06,59.01,58.02,57.01,56.04,55.07,54.11,53.19,52.27,51.39,50.49,49.61,48.80,47.95,47.14,46.32,45.54,44.74,43.96,43.22,42.47,41.75,41.02,40.31,39.67,38.98,38.32,37.66,37.02,36.37,35.74,35.14,34.52,33.94,33.35,32.77,32.25,31.69,31.16,30.61,30.10,29.57,29.06,28.57,28.07,27.59,27.11,26.64,26.22,25.76,25.33,24.89,24.47,24.04,23.62,23.22,22.82,22.43,22.04,21.66,21.30,20.93,20.58,20.22,19.88,19.53,19.19];
+const S3=[63.53,62.48,61.41,60.39,59.35,58.33,57.37,56.38,55.45,54.50,53.56,52.73,51.83,50.97,50.09,49.26,48.42,47.59,46.80,46.00,45.23,44.46,43.70,42.99,42.26,41.56,40.84,40.17,39.48,38.80,38.16,37.50,36.88,36.25,35.63,35.07,34.47,33.90,33.32,32.77,32.20,31.65,31.13,30.59,30.09,29.57,29.06,28.61,28.12,27.66,27.18,26.73,26.27,25.82,25.39,24.96,24.54,24.12,23.71,23.34,22.94,22.56,22.17,21.81,21.43,21.06,20.72,20.36,20.02,19.68,19.34,19.03,18.70,18.39,18.08,17.78,17.47,17.17,16.89];
+const JP=[629.60,618.25,607.45,596.50,585.74,575.52,565.14,555.28,545.27,535.43,526.70,517.21,508.18,499.02,490.31,481.46,472.78,464.53,456.15,448.19,440.11,432.17,424.88,417.22,409.93,402.54,395.52,388.38,381.38,374.72,367.97,361.54,355.02,348.62,342.94,336.76,330.88,324.91,319.24,313.48,307.83,302.46,297.00,291.82,286.56,281.39];
+
+const LOANS_DEF=[
+  {id:"sant1",name:"Sant. Consig. 1",owner:"Erwin",inst:"Santander",rate:1.3219,bal:63288.88,startK:mk(2026,4),sched:S1,color:"#d63031"},
+  {id:"sant2",name:"Sant. Consig. 2",owner:"Erwin",inst:"Santander",rate:1.7165,bal:3136.90,startK:mk(2026,4),sched:S2,color:"#e17055"},
+  {id:"sant3",name:"Sant. Consig. 3",owner:"Erwin",inst:"Santander",rate:1.6876,bal:2786.22,startK:mk(2026,4),sched:S3,color:"#fab1a0"},
+  {id:"jeep",name:"Sant. Jeep",owner:"Erwin",inst:"Santander",rate:1.77,bal:19913.98,startK:mk(2026,4),sched:JP,color:"#c0392b"},
+  {id:"bb1",name:"BB Consig. EK1",owner:"Erwin",inst:"BB",rate:2.68,bal:22277.66,startK:mk(2026,4),sched:Array(48).fill(852.61),color:"#f39c12"},
+  {id:"bb2",name:"BB Consig. EK2",owner:"Erwin",inst:"BB",rate:2.73,bal:4119.88,startK:mk(2026,4),sched:Array(48).fill(159.26),color:"#e67e22"},
+  {id:"bb3",name:"BB Consig. EK3",owner:"Erwin",inst:"BB",rate:3.27,bal:2060.40,startK:mk(2026,4),sched:Array(48).fill(90.47),color:"#d35400"},
+  {id:"bbrk",name:"BB Consig. RK",owner:"Raquel",inst:"BB",rate:3.22,bal:20950,startK:mk(2026,6),sched:Array(37).fill(977.39),color:"#8e44ad"},
+  {id:"barra",name:"Barracred RK",owner:"Raquel",inst:"Barracred",rate:0.5,bal:11808.78,startK:mk(2026,4),sched:Array(16).fill(707.53),color:"#27ae60"},
+];
+
+const FIXED_EXP_DEF=[
+  {id:"aluguel",name:"Aluguel + Cond.",val:2160,growthRate:5,isLoan:false},
+  {id:"luz",name:"Luz",val:320,growthRate:4,isLoan:false},
+  {id:"gas",name:"Gás",val:30,growthRate:3,isLoan:false},
+  {id:"colegio",name:"Colégio Objetivo",val:1934.50,growthRate:10,isLoan:false},
+  {id:"mercado",name:"Mercado/Comida",val:1886,growthRate:5,isLoan:false},
+  {id:"cartoes",name:"Cartões",val:450,growthRate:3,isLoan:false},
+  {id:"jeep_parc",name:"Parcela Jeep",val:643.80,growthRate:0,isLoan:true},
+  {id:"combustivel",name:"Combustível",val:400,growthRate:4,isLoan:false},
+  {id:"vivo",name:"Vivo",val:270,growthRate:3,isLoan:false},
+  {id:"outros",name:"Outros",val:0,growthRate:3,isLoan:false},
+];
+
+function calcExpense(exp,mo){return exp.val*Math.pow(1+exp.growthRate/100,mo/12);}
+function calcTotalFixedAtMonth(exps,mo){return exps.reduce((s,e)=>s+calcExpense(e,mo),0);}
+function calcFixedNoLoanAtMonth(exps,mo){return exps.filter(e=>!e.isLoan).reduce((s,e)=>s+calcExpense(e,mo),0);}
+
+function calcINSS(g){let t=0,p=0;for(const[l,r]of[[1412,.075],[2666.68,.09],[4000.03,.12],[7786.02,.14]]){if(g<=p)break;t+=(Math.min(g,l)-p)*r;p=l;}return t;}
+function calcIRRF(g,i){const b=g-i;for(const[l,r,d]of[[2259.20,0,0],[2826.65,.075,169.44],[3751.05,.15,381.44],[4664.68,.225,662.77],[1e9,.275,896]]){if(b<=l)return Math.max(0,b*r-d);}return 0;}
+function netS(g){const i=calcINSS(g);return g-i-calcIRRF(g,i);}
+function netPPR(g){for(const[l,r,d]of[[7640.80,0,0],[9922.28,.075,573.06],[13167,.15,1316.28],[16380.38,.225,2303.55],[1e9,.275,3122.06]]){if(g<=l)return g-Math.max(0,g*r-d);}return g;}
+function gSal(base,target,i,months){return base+(target-base)*Math.min(i,months)/months;}
+
+function runSim(params){
+  const{raquelBruto,erwinBruto,vaRaquel,vaErwin,pprMultiplier,raquelTarget,erwinTarget,growthMonths,fiiRate,livingMin,fixedExps}=params;
+  const START=mk(2026,4);const END_K=mk(2060,11);
+  let pool=14440.24;
+  let loans=LOANS_DEF.map(l=>({...l,balance:l.bal,paidOff:false,paidOffMonth:null,totalPaid:0,totalInterest:0}));
+  const months=[];let debtFreeK=null,portfolio=0;
+  for(let i=0;;i++){
+    const k=START+i;if(k>END_K)break;
+    const[y,m]=fk(k);
+    const rG=gSal(raquelBruto,raquelTarget,i,growthMonths);
+    const eG=gSal(erwinBruto,erwinTarget,i,growthMonths);
+    const vaR_cur=gSal(vaRaquel,vaRaquel*(raquelTarget/Math.max(raquelBruto,1)),i,growthMonths);
+    const vaE_cur=gSal(vaErwin,vaErwin*(erwinTarget/Math.max(erwinBruto,1)),i,growthMonths);
+    const income=netS(rG)+netS(eG)+vaR_cur+vaE_cur;
+    const fixedNoLoan=calcFixedNoLoanAtMonth(fixedExps,i);
+    const totalDebtBefore=loans.reduce((s,l)=>s+l.balance,0);
+    const isDebtFree=totalDebtBefore<=0.5;
+    if(!isDebtFree){
+      const surp=Math.max(0,income-fixedNoLoan-livingMin);
+      const liv=Math.min(income-fixedNoLoan,livingMin);
+      pool+=surp;
+      let lumpSum=0,lumpLbl="";
+      if(m===11){const b=netS(rG)+netS(eG);lumpSum+=b;lumpLbl=`13° (${R$(b)})`;}
+      if(m===3&&y>=2027){const p=netPPR(rG*pprMultiplier);lumpSum+=p;lumpLbl+=(lumpLbl?" + ":"")+`PPR (${R$(p)})`;}
+      pool+=lumpSum;
+      let totalPmt=0;const loanDet=[];
+      for(const loan of loans){
+        if(loan.paidOff||loan.balance<=0.5){if(!loan.paidOff&&loan.balance<=0.5){loan.paidOff=true;loan.paidOffMonth=loan.paidOffMonth||k;loan.balance=0;}loanDet.push({id:loan.id,name:loan.name,pmt:0,bal:0,color:loan.color});continue;}
+        const si=k-loan.startK;if(si<0){loanDet.push({id:loan.id,name:loan.name,pmt:0,bal:loan.balance,color:loan.color});continue;}
+        const interest=loan.balance*loan.rate/100;let sp=si<loan.sched.length?loan.sched[si]:0;
+        if(sp<=0&&loan.balance>0.5)sp=Math.min(loan.balance+interest,loan.sched[0]||500);
+        sp=Math.min(sp,loan.balance+interest);const princ=Math.max(0,sp-interest);
+        loan.balance=Math.max(0,loan.balance-princ);loan.totalPaid+=sp;loan.totalInterest+=interest;
+        totalPmt+=sp;
+        if(loan.balance<=0.5){loan.paidOff=true;loan.paidOffMonth=k;loan.balance=0;}
+        loanDet.push({id:loan.id,name:loan.name,pmt:sp,bal:loan.balance,color:loan.color});
+      }
+      pool-=totalPmt;
+      let lumpAmort=0;const amortDet=[];
+      if(lumpSum>0){const mN=m===11?4:8;const est=totalPmt>0?totalPmt:3500;const exc=Math.max(0,pool-est*mN);let rem=exc;
+        for(const loan of loans.filter(l=>!l.paidOff&&l.balance>0.5).sort((a,b)=>b.rate-a.rate)){if(rem<=0)break;const ap=Math.min(rem,loan.balance);if(ap>0){loan.balance-=ap;rem-=ap;lumpAmort+=ap;pool-=ap;amortDet.push({id:loan.id,name:loan.name,amount:ap,color:loan.color});if(loan.balance<=0.5){loan.paidOff=true;loan.paidOffMonth=k;loan.balance=0;}}}}
+      const totalDebt=loans.reduce((s,l)=>s+l.balance,0);
+      if(totalDebt<=0.5&&!debtFreeK){debtFreeK=k;portfolio=pool;pool=0;}
+      months.push({k,y,m,label:fm(y,m),phase:"debt",income,rG,eG,fixedNoLoan,totalPmt,pool,liv,surp,lumpSum,lumpLbl,lumpAmort,loanDet,amortDet,totalDebt,active:loans.filter(l=>!l.paidOff).length,portfolio:0,yield_:0,contribution:0,halfLiving:0,halfInvest:0,spendPower:liv,vaR:vaR_cur,vaE:vaE_cur});
+    }else{
+      if(!debtFreeK){debtFreeK=k;portfolio=pool;pool=0;}
+      const surplus=income-fixedNoLoan;const hL=Math.max(livingMin,Math.floor(surplus/2));const hI=surplus-hL;
+      let lI=0,lLbl="";
+      if(m===11){const b=netS(rG)+netS(eG);lI+=b;lLbl=`13° (${R$(b)})`;}
+      if(m===3&&y>=2027){const p=netPPR(rG*pprMultiplier);lI+=p;lLbl+=(lLbl?" + ":"")+`PPR (${R$(p)})`;}
+      const yld=portfolio*fiiRate;portfolio+=yld+hI+lI;
+      months.push({k,y,m,label:fm(y,m),phase:"invest",income,rG,eG,fixedNoLoan,totalPmt:0,pool:0,liv:hL,surp:hI,lumpSum:lI,lumpLbl:lLbl,lumpAmort:0,loanDet:[],amortDet:[],totalDebt:0,active:0,portfolio,yield_:yld,contribution:hI+lI,halfLiving:hL,halfInvest:hI,spendPower:surplus+yld,vaR:vaR_cur,vaE:vaE_cur});
+    }
+  }
+  const milestones=loans.map(l=>({...l,paidOffLabel:l.paidOffMonth?fm(...fk(l.paidOffMonth)):"—"})).sort((a,b)=>(a.paidOffMonth||9e9)-(b.paidOffMonth||9e9));
+  return{months,milestones,debtFreeK};
+}
+
+function Inp({label,value,onChange,hint,accent,prefix,step,small}){
+  const[local,setLocal]=useState(String(value));
+  const timer=useRef(null);
+  useEffect(()=>{setLocal(String(value));},[value]);
+  const handle=e=>{
+    const v=e.target.value;setLocal(v);
+    clearTimeout(timer.current);
+    timer.current=setTimeout(()=>{const n=parseFloat(v);if(!isNaN(n))onChange(n);},2000);
+  };
+  return React.createElement('div',{className:'inp-group',style:small?{marginBottom:6}:{}},
+    label&&React.createElement('div',{className:'inp-label'},label),
+    React.createElement('div',{style:{position:'relative'}},
+      prefix&&React.createElement('span',{style:{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'#5a7ab0',fontSize:11,fontWeight:700,pointerEvents:'none'}},prefix),
+      React.createElement('input',{type:'number',value:local,onChange:handle,className:accent?'accent-'+accent:'',style:{paddingLeft:prefix?34:12,paddingRight:12,paddingTop:small?7:10,paddingBottom:small?7:10,fontSize:small?13:16},step:step||'any'})
+    ),
+    hint&&React.createElement('div',{className:'inp-hint'},hint)
+  );
+}
+
+function ExpenseEditor({exps,onChange}){
+  const totalNow=exps.reduce((s,e)=>s+e.val,0);
+  const total2034=calcTotalFixedAtMonth(exps,108);
+  return React.createElement('div',null,
+    React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr auto 80px",gap:8,marginBottom:8,padding:"0 10px"}},
+      React.createElement('div',{style:{fontSize:9,color:"#5a7ab0",fontWeight:700,textTransform:"uppercase"}},"Valor atual"),
+      React.createElement('div',{style:{fontSize:9,color:"#5a7ab0",fontWeight:700,textTransform:"uppercase",textAlign:"center"}},"Cresc. a.a."),
+      React.createElement('div',{style:{fontSize:9,color:"#2d6bc4",fontWeight:700,textTransform:"uppercase",textAlign:"right"}},"Em 2034")
+    ),
+    exps.map((exp,idx)=>{
+      const val2034=calcExpense(exp,108);
+      const upd=(field,val)=>{const cp=[...exps];cp[idx]={...cp[idx],[field]:val};onChange(cp);};
+      return React.createElement('div',{key:exp.id,style:{background:"#f0f5ff",borderRadius:10,padding:"8px 10px",marginBottom:6,border:"1px solid "+(exp.isLoan?"#2d6bc450":"#d0e0f5")}},
+        React.createElement('div',{style:{fontSize:10,fontWeight:700,color:exp.isLoan?"#2d6bc4":"#1a2a4a",marginBottom:5}},
+          exp.name,exp.isLoan&&React.createElement('span',{style:{fontSize:8,color:"#7a9ac0",marginLeft:4}},"(pool)")
+        ),
+        React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr 80px",gap:6,alignItems:"center"}},
+          React.createElement(Inp,{value:exp.val,onChange:v=>upd("val",v),prefix:"R$",accent:"amber",small:true}),
+          React.createElement('div',{style:{display:"flex",alignItems:"center",gap:4}},
+            React.createElement(Inp,{value:exp.growthRate,onChange:v=>upd("growthRate",v),accent:"violet",small:true,step:"0.1"}),
+            React.createElement('span',{style:{fontSize:10,color:"#7a9ac0",flexShrink:0}},"% a.a.")
+          ),
+          React.createElement('div',{style:{textAlign:"right",fontSize:11,fontWeight:700,color:exp.growthRate>0?"#2d6bc4":"#7a9ac0"}},R$(val2034))
+        )
+      );
+    }),
+    React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"10px 12px",background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",borderRadius:10,marginTop:4}},
+      React.createElement('div',null,
+        React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"Total Atual"),
+        React.createElement('div',{style:{fontSize:14,fontWeight:800,color:"#fff"}},R$(totalNow))
+      ),
+      React.createElement('div',{style:{textAlign:"right"}},
+        React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"Total em 2034"),
+        React.createElement('div',{style:{fontSize:14,fontWeight:800,color:"#7dd3fa"}},R$(total2034))
+      )
+    )
+  );
+}
+
+function App(){
+  const[raquelBruto,setRaquelBruto]=useState(10500);
+  const[erwinBruto,setErwinBruto]=useState(4135);
+  const[vaRaquel,setVaRaquel]=useState(1116);
+  const[vaErwin,setVaErwin]=useState(730);
+  const[pprMultiplier,setPprMultiplier]=useState(4.5);
+  const[raquelTarget,setRaquelTarget]=useState(14000);
+  const[erwinTarget,setErwinTarget]=useState(6300);
+  const[fiiRate,setFiiRate]=useState(0.88);
+  const[livingMin,setLivingMin]=useState(4000);
+  const[fixedExps,setFixedExps]=useState(FIXED_EXP_DEF);
+  const[tab,setTab]=useState("inputs");
+  const[yr,setYr]=useState(2026);
+  const[exp,setExp]=useState(null);
+
+  const growthMonths=60;
+  const params=useMemo(()=>({raquelBruto,erwinBruto,vaRaquel,vaErwin,pprMultiplier,raquelTarget,erwinTarget,growthMonths,fiiRate:fiiRate/100,livingMin,fixedExps}),[raquelBruto,erwinBruto,vaRaquel,vaErwin,pprMultiplier,raquelTarget,erwinTarget,fiiRate,livingMin,fixedExps]);
+  const sim=useMemo(()=>runSim(params),[params]);
+
+  const M1=sim.months[0]||{};
+  const debtFreeLabel=sim.debtFreeK?fm(...fk(sim.debtFreeK)):"—";
+  const yrs=[...new Set(sim.months.map(r=>r.y))];
+  const origDebt=LOANS_DEF.reduce((s,l)=>s+l.bal,0);
+  const investMonths=sim.months.filter(m=>m.phase==="invest");
+  const inv2034=investMonths.filter(m=>m.y<=2034).pop();
+  const inv2060=investMonths[investMonths.length-1];
+  const debtMonths=sim.months.filter(m=>m.phase==="debt");
+  const totalIntPaid=sim.milestones.reduce((s,l)=>s+l.totalInterest,0);
+  const incomeNow=netS(raquelBruto)+netS(erwinBruto)+vaRaquel+vaErwin;
+  const fixedNow=calcFixedNoLoanAtMonth(fixedExps,0);
+  const surplusNow=Math.max(0,incomeNow-fixedNow-livingMin);
+
+  const tabs=[
+    {id:"inputs",i:"⚙️",l:"Inputs"},
+    {id:"gastos",i:"💸",l:"Gastos"},
+    {id:"resumo",i:"📊",l:"Resumo"},
+    {id:"orcamento",i:"💰",l:"Orçamento"},
+    {id:"projecao",i:"📅",l:"Projeção"},
+    {id:"marcos",i:"🏆",l:"Marcos"},
+    {id:"patrimonio",i:"📈",l:"Patrimônio"},
+    {id:"analise",i:"🧠",l:"Análise"},
+  ];
+
+  // Card components
+  const C=({children,style,cls})=>React.createElement('div',{className:'card '+(cls||''),style},children);
+  const Lb=({children,light})=>React.createElement('div',{style:{fontSize:10,color:light?"#a0c0f0":"#5a7ab0",textTransform:"uppercase",letterSpacing:1,marginBottom:8,fontWeight:700}},children);
+  const KV=({label,value,color,light})=>React.createElement('div',{style:{padding:10,background:light?"rgba(255,255,255,.12)":"#f0f5ff",borderRadius:10,border:light?"none":"1px solid #d0e0f5"}},
+    React.createElement('div',{style:{fontSize:9,color:light?"#a0c0f0":"#7a9ac0",textTransform:"uppercase",fontWeight:700}},label),
+    React.createElement('div',{style:{fontSize:14,fontWeight:800,color:color||(light?"#fff":"#1a2a4a"),marginTop:2}},value)
+  );
+
+  return React.createElement('div',null,
+    /* Header */
+    React.createElement('header',{style:{background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",borderRadius:16,padding:"18px 16px",marginBottom:14,textAlign:"center",boxShadow:"0 4px 20px #2d6bc440"}},
+      React.createElement('h1',{style:{fontFamily:"'Playfair Display',serif",fontSize:22,margin:0,color:"#fff",letterSpacing:1}},"Painel Financeiro Klein"),
+      React.createElement('p',{style:{color:"#a0c0f0",fontSize:10,margin:"4px 0"}},"Da dívida ao patrimônio — Simulação dinâmica até 2060"),
+      React.createElement('div',{style:{marginTop:6,display:"flex",alignItems:"center",justifyContent:"center",gap:6}},
+        React.createElement('span',{className:'live-dot'}),
+        React.createElement('span',{style:{fontSize:9,color:"#7df0c0",fontWeight:700}},"Cálculos em tempo real")
+      )
+    ),
+
+    /* Nav */
+    React.createElement('div',{style:{display:"flex",gap:4,marginBottom:12,overflowX:"auto",paddingBottom:4}},
+      tabs.map(t=>React.createElement('button',{key:t.id,onClick:()=>setTab(t.id),style:{padding:"7px 10px",borderRadius:20,border:"none",fontSize:10,fontWeight:700,whiteSpace:"nowrap",background:tab===t.id?"linear-gradient(135deg,#1a3a6c,#2d6bc4)":"#fff",color:tab===t.id?"#fff":"#2d6bc4",boxShadow:tab===t.id?"0 2px 8px #2d6bc440":"0 1px 3px #0002",border:tab===t.id?"none":"1px solid #d0e0f5"}},t.i," ",t.l))
+    ),
+
+    /* ═══ INPUTS ═══ */
+    tab==="inputs"&&React.createElement(React.Fragment,null,
+      React.createElement(C,{cls:"",style:{borderLeft:"4px solid #00b894"}},
+        React.createElement(Lb,null,"💰 Renda Bruta Atual"),
+        React.createElement('div',{className:'inp-row'},
+          React.createElement(Inp,{label:"Salário Bruto Raquel",value:raquelBruto,onChange:setRaquelBruto,hint:`Líquido: ${R$(netS(raquelBruto))}`,accent:"green",prefix:"R$"}),
+          React.createElement(Inp,{label:"Salário Bruto Erwin",value:erwinBruto,onChange:setErwinBruto,hint:`Líquido: ${R$(netS(erwinBruto))}`,accent:"green",prefix:"R$"})
+        ),
+        React.createElement('div',{className:'inp-row'},
+          React.createElement(Inp,{label:"Vale Alimentação Raquel",value:vaRaquel,onChange:setVaRaquel,accent:"green",prefix:"R$"}),
+          React.createElement(Inp,{label:"Vale Alimentação Erwin",value:vaErwin,onChange:setVaErwin,accent:"green",prefix:"R$"})
+        ),
+        React.createElement(Inp,{label:"PPR Raquel (multiplicador do bruto)",value:pprMultiplier,onChange:setPprMultiplier,hint:`PPR bruto: ${R$(raquelBruto*pprMultiplier)} → Líquido: ${R$(netPPR(raquelBruto*pprMultiplier))} (pago em Abril)`,accent:"green",step:"0.1"})
+      ),
+      React.createElement(C,{style:{borderLeft:"4px solid #2d6bc4"}},
+        React.createElement(Lb,null,"📈 Projeção Salarial — 2034 (40 anos)"),
+        React.createElement('div',{className:'inp-row'},
+          React.createElement(Inp,{label:"Meta Bruto Raquel em 2034",value:raquelTarget,onChange:setRaquelTarget,hint:`Líquido projetado: ${R$(netS(raquelTarget))}`,accent:"pink",prefix:"R$"}),
+          React.createElement(Inp,{label:"Meta Bruto Erwin em 2034",value:erwinTarget,onChange:setErwinTarget,hint:`Líquido projetado: ${R$(netS(erwinTarget))}`,accent:"pink",prefix:"R$"})
+        ),
+        React.createElement('div',{style:{background:"#e8f0fb",borderRadius:10,padding:10,marginTop:4,border:"1px solid #d0e0f5"}},
+          React.createElement('div',{style:{fontSize:9,color:"#2d6bc4",fontWeight:700,marginBottom:4}},"CRESCIMENTO LINEAR (60 MESES)"),
+          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:2}},
+            React.createElement('span',{style:{color:"#5a7ab0"}},"Raquel: ",R$(raquelBruto)," → ",R$(raquelTarget)),
+            React.createElement('span',{style:{color:"#00b894",fontWeight:700}},"+",((raquelTarget/Math.max(raquelBruto,1)-1)*100).toFixed(0),"%")
+          ),
+          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",fontSize:11}},
+            React.createElement('span',{style:{color:"#5a7ab0"}},"Erwin: ",R$(erwinBruto)," → ",R$(erwinTarget)),
+            React.createElement('span',{style:{color:"#00b894",fontWeight:700}},"+",((erwinTarget/Math.max(erwinBruto,1)-1)*100).toFixed(0),"%")
+          )
+        )
+      ),
+      React.createElement(C,{style:{borderLeft:"4px solid #6c5ce7"}},
+        React.createElement(Lb,null,"🏦 Investimento & Custo de Vida"),
+        React.createElement('div',{className:'inp-row'},
+          React.createElement(Inp,{label:"Dividend Yield FII (% ao mês)",value:fiiRate,onChange:setFiiRate,hint:`≈ ${((Math.pow(1+fiiRate/100,12)-1)*100).toFixed(1)}% ao ano`,accent:"violet",step:"0.01"}),
+          React.createElement(Inp,{label:"Reserva p/ Viver (R$/mês)",value:livingMin,onChange:setLivingMin,hint:"Após gastos fixos, quanto reservar para viver",accent:"amber",prefix:"R$"})
+        )
+      ),
+      React.createElement('div',{className:'sep'}),
+      React.createElement('div',{style:{fontSize:11,fontWeight:800,color:"#2d6bc4",marginBottom:8,display:"flex",alignItems:"center",gap:6}},
+        React.createElement('span',{className:'live-dot'})," Prévia em Tempo Real"
+      ),
+      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}},
+        [{l:"Renda Líquida Familiar",v:R$(incomeNow),c:"#00b894"},{l:"Gastos Fixos",v:R$(fixedNow),c:"#f39c12"},{l:"Reserva Viver",v:R$(livingMin),c:"#1a2a4a"},{l:"Sobra → Pool",v:R$(surplusNow),c:"#2d6bc4"},{l:"Dívida Total",v:R$(origDebt),c:"#d63031"},{l:"Livre em",v:debtFreeLabel,c:"#00b894"},{l:"Patrimônio 2034",v:inv2034?R$(inv2034.portfolio):"—",c:"#2d6bc4"},{l:"Rend. FII 2034",v:inv2034?R$(inv2034.yield_)+"/mês":"—",c:"#6c5ce7"}].map((x,i)=>
+          React.createElement(KV,{key:i,label:x.l,value:x.v,color:x.c})
+        )
+      )
+    ),
+
+    /* ═══ GASTOS ═══ */
+    tab==="gastos"&&React.createElement(React.Fragment,null,
+      React.createElement(C,{style:{borderLeft:"4px solid #f39c12"}},
+        React.createElement(Lb,null,"💸 Gastos Fixos + Crescimento Anual"),
+        React.createElement('div',{style:{fontSize:9,color:"#7a9ac0",marginBottom:10,lineHeight:1.6}},"Defina o valor atual e a taxa de crescimento anual de cada gasto."),
+        React.createElement(ExpenseEditor,{exps:fixedExps,onChange:setFixedExps})
+      ),
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Projeção dos Gastos ao Longo do Tempo"),
+        [2026,2028,2030,2032,2034,2040,2050,2060].map(yr2=>{
+          const mo=(yr2-2026)*12;
+          const tot=calcTotalFixedAtMonth(fixedExps,mo);
+          const max=calcTotalFixedAtMonth(fixedExps,408);
+          return React.createElement('div',{key:yr2,style:{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
+            React.createElement('span',{style:{fontSize:11,fontWeight:700,width:36,flexShrink:0}},yr2),
+            React.createElement('div',{style:{flex:1,height:6,background:"#e8f0fb",borderRadius:3,overflow:"hidden"}},
+              React.createElement('div',{style:{height:"100%",width:Math.min(100,tot/max*100)+"%",background:"linear-gradient(90deg,#2d6bc4,#00cec9)",borderRadius:3}})
+            ),
+            React.createElement('span',{style:{fontSize:11,color:"#2d6bc4",fontWeight:700,width:100,textAlign:"right",flexShrink:0}},R$(tot))
+          );
+        })
+      ),
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Detalhamento por Item em 2034"),
+        fixedExps.map((e,i)=>React.createElement('div',{key:e.id,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
+          React.createElement('div',null,
+            React.createElement('div',{style:{fontSize:11,color:e.isLoan?"#2d6bc4":"#1a2a4a"}},e.name),
+            React.createElement('div',{style:{fontSize:8,color:"#7a9ac0"}},e.growthRate>0?`+${e.growthRate}% a.a.`:"sem crescimento")
+          ),
+          React.createElement('div',{style:{textAlign:"right"}},
+            React.createElement('div',{style:{fontSize:11,fontWeight:700,color:"#2d6bc4"}},R$(calcExpense(e,108))),
+            React.createElement('div',{style:{fontSize:8,color:"#7a9ac0"}},"hoje: ",R$(e.val))
+          )
+        ))
+      )
+    ),
+
+    /* ═══ RESUMO ═══ */
+    tab==="resumo"&&React.createElement(React.Fragment,null,
+      React.createElement(C,{cls:"card-red",style:{marginBottom:10}},
+        React.createElement(Lb,{light:true},"🔴 Fase 1 — Quitação de Dívidas"),
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+          React.createElement('div',null,
+            React.createElement('div',{style:{fontSize:9,color:"#fca0a0"}},"DÍVIDA TOTAL ATUAL"),
+            React.createElement('div',{style:{fontSize:22,fontWeight:800,color:"#fff"}},R$(origDebt))
+          ),
+          React.createElement('div',{style:{textAlign:"right"}},
+            React.createElement('div',{style:{fontSize:9,color:"#fca0a0"}},"LIVRE EM"),
+            React.createElement('div',{style:{fontSize:22,fontWeight:800,color:"#7df0c0"}},debtFreeLabel),
+            React.createElement('div',{style:{fontSize:9,color:"#fca0a0"}},debtMonths.length," meses")
+          )
+        )
+      ),
+      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}},
+        [{l:"Pool Inicial",v:"R$ 14.440,24",c:"#2d6bc4"},{l:"Juros Totais",v:R$(totalIntPaid),c:"#f39c12"},{l:"Parcelas (Mai/26)",v:R$(M1.totalPmt),c:"#d63031"},{l:"P/ Viver",v:R$(livingMin),c:"#1a2a4a"}].map((x,i)=>React.createElement(KV,{key:i,label:x.l,value:x.v,color:x.c}))
+      ),
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Empréstimos — Ordem de Quitação"),
+        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,style:{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
+          React.createElement('div',{style:{width:24,height:24,borderRadius:12,background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",color:"#fff",fontSize:9,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}},i+1),
+          React.createElement('div',{style:{flex:1,minWidth:0}},
+            React.createElement('div',{style:{fontSize:11,fontWeight:600,color:l.color}},l.name," ",React.createElement('span',{style:{color:"#7a9ac0",fontSize:9}},"(",l.owner,")")),
+            React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},l.rate,"% a.m. · Saldo: ",R$(l.bal))
+          ),
+          React.createElement('div',{style:{textAlign:"right",flexShrink:0}},
+            React.createElement('div',{style:{fontSize:11,fontWeight:800,color:"#00b894"}},l.paidOffLabel),
+            React.createElement('div',{style:{fontSize:8,color:"#f39c12"}},"Juros: ",R$(l.totalInterest))
+          )
+        ))
+      ),
+      React.createElement('div',{className:'sep'}),
+      React.createElement(C,{cls:"card-teal",style:{marginBottom:10}},
+        React.createElement(Lb,{light:true},"🟢 Fase 2 — Construção de Patrimônio"),
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+          React.createElement('div',null,
+            React.createElement('div',{style:{fontSize:9,color:"#a0f0d0"}},"PATRIMÔNIO EM 2034 (40 ANOS)"),
+            React.createElement('div',{style:{fontSize:20,fontWeight:800,color:"#fff"}},inv2034?R$(inv2034.portfolio):"—")
+          ),
+          React.createElement('div',{style:{textAlign:"right"}},
+            React.createElement('div',{style:{fontSize:9,color:"#a0f0d0"}},"RENDIMENTO FII/MÊS"),
+            React.createElement('div',{style:{fontSize:16,fontWeight:800,color:"#7dd3fa"}},inv2034?R$(inv2034.yield_):"—")
+          )
+        )
+      ),
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Evolução até 2034"),
+        [2028,2029,2030,2031,2032,2033,2034].map(y=>{
+          const dec=investMonths.filter(m=>m.y===y).pop();
+          if(!dec)return null;
+          return React.createElement('div',{key:y,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb",gap:4}},
+            React.createElement('span',{style:{fontSize:11,fontWeight:700}}),
+            React.createElement('span',{style:{fontSize:11,color:"#00b894",fontWeight:700}},y,": ",R$(dec.portfolio)),
+            React.createElement('span',{style:{fontSize:10,color:"#6c5ce7"}},"Rend: ",R$(dec.yield_)),
+            React.createElement('span',{style:{fontSize:10,color:"#2d6bc4",fontWeight:700}},R$(dec.spendPower))
+          );
+        })
+      )
+    ),
+
+    /* ═══ ORÇAMENTO ═══ */
+    tab==="orcamento"&&React.createElement(React.Fragment,null,
+      React.createElement(C,{style:{borderLeft:"4px solid #00b894"}},
+        React.createElement(Lb,null,"Entradas Mensais (Mai/2026)"),
+        [{n:"Sal. Raquel (líq. de "+R$(raquelBruto)+")",v:netS(raquelBruto),c:"#00b894"},{n:"VA Raquel",v:vaRaquel,c:"#27ae60"},{n:"Sal. Erwin (líq. de "+R$(erwinBruto)+")",v:netS(erwinBruto),c:"#2d6bc4"},{n:"VA Erwin",v:vaErwin,c:"#0984e3"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #e8f0fb"}},React.createElement('span',{style:{fontSize:11,color:"#5a7ab0"}},e.n),React.createElement('span',{style:{fontSize:12,fontWeight:700,color:e.c}},R$(e.v)))),
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"8px 0 0"}},React.createElement('span',{style:{fontSize:12,fontWeight:800}},"TOTAL"),React.createElement('span',{style:{fontSize:14,fontWeight:800,color:"#00b894"}},R$(incomeNow)))
+      ),
+      React.createElement(C,{style:{borderLeft:"4px solid #f39c12"}},
+        React.createElement(Lb,null,"Gastos Fixos Mensais (Mai/2026)"),
+        fixedExps.map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #e8f0fb"}},
+          React.createElement('span',{style:{fontSize:11,color:e.isLoan?"#2d6bc4":"#5a7ab0"}},e.name,e.isLoan?" (Pool)":"",e.growthRate>0?React.createElement('span',{style:{fontSize:8,color:"#b0c8e8",marginLeft:4}},"+",e.growthRate,"% a.a."):""),
+          React.createElement('span',{style:{fontSize:12,fontWeight:700,color:e.isLoan?"#2d6bc4":"#f39c12"}},R$(e.val))
+        )),
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"6px 0 0"}},React.createElement('span',{style:{fontSize:12,fontWeight:800}},"TOTAL"),React.createElement('span',{style:{fontSize:14,fontWeight:800,color:"#f39c12"}},R$(fixedExps.reduce((s,e)=>s+e.val,0))))
+      ),
+      React.createElement(C,{cls:"card-blue"},
+        React.createElement(Lb,{light:true},"Fluxo Mensal — Mai/2026"),
+        [{n:"+ Renda líquida",v:incomeNow,c:"#7df0c0"},{n:"- Gastos fixos",v:fixedNow,c:"#ffd080"},{n:"- P/ viver",v:livingMin,c:"#fff"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"4px 0"}},React.createElement('span',{style:{fontSize:11,color:e.c}},e.n),React.createElement('span',{style:{fontSize:12,fontWeight:700,color:e.c}},R$(e.v)))),
+        React.createElement('div',{style:{height:2,background:"rgba(255,255,255,.3)",margin:"8px 0"}}),
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},React.createElement('span',{style:{fontSize:13,fontWeight:800,color:"#fff"}},"= SOBRA → POOL"),React.createElement('span',{style:{fontSize:18,fontWeight:800,color:"#7dd3fa"}},R$(surplusNow)))
+      ),
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Receitas Extras → Pool"),
+        [{n:"13° Raquel",v:netS(raquelBruto),p:"Dezembro"},{n:"13° Erwin",v:netS(erwinBruto),p:"Dezembro"},{n:`PPR Raquel ~${pprMultiplier}x`,v:netPPR(raquelBruto*pprMultiplier),p:"Abril (2027+)"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},React.createElement('div',null,React.createElement('div',{style:{fontSize:11,fontWeight:600}},e.n),React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},e.p)),React.createElement('span',{style:{fontSize:12,fontWeight:700,color:"#6c5ce7"}},R$(e.v))))
+      )
+    ),
+
+    /* ═══ PROJEÇÃO ═══ */
+    tab==="projecao"&&React.createElement(React.Fragment,null,
+      React.createElement(C,{style:{padding:8}},React.createElement('div',{style:{display:"flex",gap:4,flexWrap:"wrap"}},
+        yrs.map(y=>React.createElement('button',{key:y,onClick:()=>setYr(y),style:{padding:"5px 10px",borderRadius:14,border:yr===y?"none":"1px solid #d0e0f5",fontSize:10,fontWeight:700,background:yr===y?"linear-gradient(135deg,#1a3a6c,#2d6bc4)":"#fff",color:yr===y?"#fff":"#2d6bc4"}},y))
+      )),
+      sim.months.filter(r=>r.y===yr).map(row=>{
+        const isE=exp===row.k;const dp=origDebt>0?Math.max(0,row.totalDebt/origDebt*100):0;
+        const isInv=row.phase==="invest";const hasEv=row.lumpSum>0||row.amortDet.length>0;
+        return React.createElement('div',{key:row.k,onClick:()=>setExp(isE?null:row.k),style:{background:isInv?"#f0fff8":"#fff",borderRadius:12,padding:10,marginBottom:6,cursor:"pointer",border:"1px solid "+(isInv?"#00b89440":hasEv?"#6c5ce440":"#d0e0f5"),boxShadow:"0 1px 4px #2d6bc415"}},
+          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+            React.createElement('div',null,
+              React.createElement('span',{style:{fontSize:12,fontWeight:700,color:"#1a2a4a"}},row.label),
+              React.createElement('span',{style:{fontSize:8,marginLeft:6,padding:"2px 7px",borderRadius:10,background:isInv?"#00b89420":"#d6303120",color:isInv?"#00b894":"#d63031",fontWeight:700}},isInv?"INVESTINDO":"DÍVIDA"),
+              row.lumpLbl&&React.createElement('div',{style:{fontSize:8,color:"#6c5ce7",marginTop:2,fontWeight:700}},"★ ",row.lumpLbl)
+            ),
+            React.createElement('div',{style:{textAlign:"right"}},
+              isInv?React.createElement(React.Fragment,null,
+                React.createElement('div',{style:{fontSize:13,fontWeight:800,color:"#00b894"}},R$(row.portfolio)),
+                React.createElement('div',{style:{fontSize:8,color:"#6c5ce7"}},"Rend: ",R$(row.yield_),"/mês")
+              ):React.createElement(React.Fragment,null,
+                React.createElement('div',{style:{fontSize:13,fontWeight:800,color:row.active>0?"#d63031":"#00b894"}},row.active>0?R$(row.totalDebt):"✓ LIVRE!"),
+                React.createElement('div',{style:{fontSize:8,color:"#2d6bc4",fontWeight:700}},"Pool: ",R$(row.pool))
+              )
+            )
+          ),
+          !isInv&&React.createElement('div',{style:{height:4,background:"#e8f0fb",borderRadius:2,margin:"6px 0",overflow:"hidden"}},React.createElement('div',{style:{height:"100%",width:dp+"%",background:"linear-gradient(90deg,#00b894,#f39c12,#d63031)",borderRadius:2}})),
+          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",fontSize:9,color:"#7a9ac0",flexWrap:"wrap",gap:2}},
+            isInv?React.createElement(React.Fragment,null,
+              React.createElement('span',{style:{color:"#00b894"}},"Viver: ",R$(row.halfLiving)),
+              React.createElement('span',{style:{color:"#6c5ce7"}},"FII: ",R$(row.halfInvest)),
+              React.createElement('span',{style:{color:"#2d6bc4",fontWeight:700}},"Poder: ",R$(row.spendPower))
+            ):React.createElement(React.Fragment,null,
+              React.createElement('span',null,"Parc: ",R$(row.totalPmt)),
+              React.createElement('span',{style:{color:"#2d6bc4"}},"+Pool: ",R$(row.surp)),
+              React.createElement('span',null,"Viver: ",R$(row.liv)),
+              row.lumpAmort>0&&React.createElement('span',{style:{color:"#6c5ce7",fontWeight:700}},"Amort: ",R$(row.lumpAmort))
+            )
+          ),
+          isE&&React.createElement('div',{style:{marginTop:8,paddingTop:8,borderTop:"1px solid #d0e0f5",fontSize:10}},
+            React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:8}},
+              React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Renda líq."),React.createElement('br'),React.createElement('strong',{style:{color:"#00b894"}},R$(row.income))),
+              React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Gastos fixos"),React.createElement('br'),React.createElement('strong',{style:{color:"#f39c12"}},R$(row.fixedNoLoan))),
+              isInv?React.createElement(React.Fragment,null,
+                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Sobra total"),React.createElement('br'),React.createElement('strong',null,R$(row.income-row.fixedNoLoan))),
+                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Rend. FII"),React.createElement('br'),React.createElement('strong',{style:{color:"#6c5ce7"}},R$(row.yield_))),
+                React.createElement('div',{style:{gridColumn:"1/-1",background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",borderRadius:8,padding:8,textAlign:"center"}},
+                  React.createElement('div',{style:{fontSize:9,color:"#a0c0f0"}},"PODER DE COMPRA MENSAL"),
+                  React.createElement('div',{style:{fontSize:18,fontWeight:800,color:"#fff",marginTop:2}},R$(row.spendPower)),
+                  React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"Plano: ",R$(row.halfLiving)," viver + ",R$(row.halfInvest)," FII")
+                ),
+                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Patrimônio"),React.createElement('br'),React.createElement('strong',{style:{color:"#2d6bc4"}},R$(row.portfolio))),
+                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Aporte"),React.createElement('br'),React.createElement('strong',{style:{color:"#6c5ce7"}},R$(row.contribution)))
+              ):React.createElement(React.Fragment,null,
+                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"P/ viver"),React.createElement('br'),React.createElement('strong',null,R$(row.liv))),
+                React.createElement('div',null,React.createElement('span',{style:{color:"#2d6bc4"}},"Sobra → Pool"),React.createElement('br'),React.createElement('strong',{style:{color:"#2d6bc4"}},R$(row.surp))),
+                React.createElement('div',null,React.createElement('span',{style:{color:"#d63031"}},"Parcelas"),React.createElement('br'),React.createElement('strong',{style:{color:"#d63031"}},R$(row.totalPmt))),
+                React.createElement('div',null,React.createElement('span',{style:{color:"#2d6bc4"}},"Pool final"),React.createElement('br'),React.createElement('strong',{style:{color:"#2d6bc4"}},R$(row.pool)))
+              )
+            ),
+            row.lumpSum>0&&React.createElement('div',{style:{background:"#ede9fe",borderRadius:6,padding:6,marginBottom:6,border:"1px solid #c4b5fd"}},
+              React.createElement('div',{style:{color:"#6c5ce7",fontWeight:700}},"★ ",R$(row.lumpSum)," → ",isInv?"FIIs":"Pool"),
+              !isInv&&row.lumpAmort>0&&React.createElement('div',{style:{color:"#2d6bc4",fontSize:9}},"Excesso → Amort: ",R$(row.lumpAmort))
+            ),
+            row.amortDet.length>0&&React.createElement('div',{style:{marginBottom:6}},
+              React.createElement('div',{style:{fontWeight:700,color:"#2d6bc4",marginBottom:3}},"Amortizações:"),
+              row.amortDet.map((a,i)=>React.createElement('div',{key:i,style:{color:a.color}},"→ ",a.name,": ",R$(a.amount),sim.milestones.find(ml=>ml.id===a.id)?.paidOffMonth===row.k?" ✓ QUITADO!":""))
+            ),
+            !isInv&&row.loanDet.filter(l=>l.bal>0.5).length>0&&React.createElement('div',null,
+              React.createElement('div',{style:{fontWeight:700,color:"#7a9ac0",marginBottom:3}},"Saldos:"),
+              row.loanDet.filter(l=>l.bal>0.5).map((l,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between"}},React.createElement('span',{style:{color:l.color}},l.name),React.createElement('span',{style:{color:"#5a7ab0"}},R$(l.bal))))
+            )
+          )
+        );
+      })
+    ),
+
+    /* ═══ MARCOS ═══ */
+    tab==="marcos"&&React.createElement(React.Fragment,null,
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Quitação das Dívidas"),
+        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,style:{display:"flex",gap:8,marginBottom:10}},
+          React.createElement('div',{style:{display:"flex",flexDirection:"column",alignItems:"center",flexShrink:0}},
+            React.createElement('div',{style:{width:26,height:26,borderRadius:13,display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",color:"#fff",fontSize:10,fontWeight:800}},i+1),
+            i<sim.milestones.length-1&&React.createElement('div',{style:{width:2,flex:1,minHeight:12,background:"#d0e0f5"}})
+          ),
+          React.createElement('div',{style:{flex:1}},
+            React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},React.createElement('span',{style:{fontSize:11,fontWeight:700,color:l.color}},l.name),React.createElement('span',{style:{fontSize:11,fontWeight:800,color:"#00b894"}},l.paidOffLabel)),
+            React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},l.owner," · ",l.rate,"% · ",R$(l.bal)),
+            React.createElement('div',{style:{fontSize:9,color:"#f39c12"}},"Juros: ",R$(l.totalInterest))
+          )
+        ))
+      ),
+      React.createElement(C,{style:{borderLeft:"4px solid #00b894"}},
+        React.createElement(Lb,null,"Marcos da Jornada"),
+        (()=>{
+          const evts=[];
+          sim.months.forEach(m=>{if(m.phase==="debt"&&m.amortDet.length>0)evts.push(m);});
+          const dfm=sim.months.find(m=>m.phase==="invest");if(dfm)evts.push({...dfm,evt:"FREE"});
+          if(inv2034)evts.push({...inv2034,evt:"40"});
+          if(inv2060)evts.push({...inv2060,evt:"60"});
+          return evts.slice(0,20).map((m,i)=>React.createElement('div',{key:i,style:{padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
+            React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},
+              React.createElement('span',{style:{fontSize:11,fontWeight:700}},m.label),
+              m.evt==="FREE"&&React.createElement('span',{style:{fontSize:10,color:"#00b894",fontWeight:800}},"🎉 LIVRE!"),
+              m.evt==="40"&&React.createElement('span',{style:{fontSize:10,color:"#2d6bc4",fontWeight:800}},"🎯 40 ANOS"),
+              m.evt==="60"&&React.createElement('span',{style:{fontSize:10,color:"#6c5ce7",fontWeight:800}},"🏖️ APOSENTADORIA"),
+              !m.evt&&React.createElement('span',{style:{fontSize:9,color:"#7a9ac0"}},m.active," empr.")
+            ),
+            m.lumpAmort>0&&React.createElement('div',{style:{fontSize:9,color:"#2d6bc4"}},"Amortizou ",R$(m.lumpAmort)),
+            m.evt==="FREE"&&React.createElement('div',{style:{fontSize:9,color:"#00b894"}},"Pool → investimento inicial: ",R$(m.portfolio)),
+            (m.evt==="40"||m.evt==="60")&&React.createElement('div',{style:{fontSize:9,color:"#6c5ce7"}},"Patrim: ",R$(m.portfolio)," · Rend: ",R$(m.yield_),"/mês · Poder: ",R$(m.spendPower),"/mês")
+          ));
+        })()
+      )
+    ),
+
+    /* ═══ PATRIMÔNIO ═══ */
+    tab==="patrimonio"&&React.createElement(React.Fragment,null,
+      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}},
+        React.createElement(C,{cls:"card-blue"},
+          React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"2034 — 40 ANOS"),
+          React.createElement('div',{style:{fontSize:16,fontWeight:800,color:"#fff",margin:"4px 0"}},inv2034?R$(inv2034.portfolio):"—"),
+          React.createElement('div',{style:{fontSize:9,color:"#7dd3fa"}},"Rend: ",inv2034?R$(inv2034.yield_):"—","/mês")
+        ),
+        React.createElement(C,{cls:"card-teal"},
+          React.createElement('div',{style:{fontSize:8,color:"#a0f0d0"}},"2060 — APOSENTADORIA"),
+          React.createElement('div',{style:{fontSize:16,fontWeight:800,color:"#fff",margin:"4px 0"}},inv2060?R$(inv2060.portfolio):"—"),
+          React.createElement('div',{style:{fontSize:9,color:"#7dd3fa"}},"Rend: ",inv2060?R$(inv2060.yield_):"—","/mês")
+        )
+      ),
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Poder de Compra Mensal por Ano"),
+        investMonths.filter((_,i)=>i%12===11||i===investMonths.length-1).map((m,i)=>
+          React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb",alignItems:"center",gap:4}},
+            React.createElement('span',{style:{fontSize:11,fontWeight:700,flexShrink:0}},m.y),
+            React.createElement('span',{style:{fontSize:11,color:"#00b894",fontWeight:700}},R$(m.portfolio)),
+            React.createElement('span',{style:{fontSize:10,color:"#6c5ce7"}},"Rend: ",R$(m.yield_)),
+            React.createElement('span',{style:{fontSize:10,color:"#2d6bc4",fontWeight:700}},R$(m.spendPower))
+          )
+        )
+      )
+    ),
+
+    /* ═══ ANÁLISE ═══ */
+    tab==="analise"&&React.createElement(React.Fragment,null,
+      React.createElement(C,{cls:"card-blue",style:{marginBottom:10}},
+        React.createElement(Lb,{light:true},"Parecer Final"),
+        React.createElement('div',{style:{fontSize:11,color:"#c8dcf8",lineHeight:1.9}},
+          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#fca0a0"}},"Dívidas:")," ",R$(origDebt)," quitados em ",debtMonths.length," meses (",debtFreeLabel,"). Juros totais: ",R$(totalIntPaid),"."),
+          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#ffd080"}},"Gastos fixos:")," Atuais ",R$(fixedExps.reduce((s,e)=>s+e.val,0)),"/mês. Em 2034: ",R$(calcTotalFixedAtMonth(fixedExps,108)),"/mês."),
+          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#7dd3fa"}},"Pool único:")," Sobra mensal + PPR + 13° entram. Parcelas saem."),
+          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#7df0c0"}},"Aos 40 (2034):")," Patrimônio de ",inv2034?R$(inv2034.portfolio):"—"," gerando ",inv2034?R$(inv2034.yield_):"—","/mês. Poder de compra: ",inv2034?R$(inv2034.spendPower):"—","/mês."),
+          React.createElement('p',{style:{margin:0}},React.createElement('strong',{style:{color:"#c4b5fd"}},"Aposentadoria (2060):")," Patrimônio de ",inv2060?R$(inv2060.portfolio):"—"," gerando ",inv2060?R$(inv2060.yield_):"—","/mês.")
+        )
+      ),
+      React.createElement(C,null,
+        React.createElement(Lb,null,"Ranking de Custo"),
+        LOANS_DEF.filter(l=>l.rate>0.5).sort((a,b)=>b.rate-a.rate).map((l,i)=>{
+          const ms=sim.milestones.find(m=>m.id===l.id);
+          return React.createElement('div',{key:l.id,style:{padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
+            React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},
+              React.createElement('span',{style:{fontSize:11,fontWeight:700,color:l.color}},"#",i+1," ",l.name),
+              React.createElement('span',{style:{fontSize:11,fontWeight:700,color:"#d63031"}},l.rate,"%")
+            ),
+            React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},"Juros: ",R$(ms?.totalInterest||0)," · Quita: ",ms?.paidOffLabel)
+          );
+        })
+      )
+    ),
+
+    React.createElement('div',{style:{textAlign:"center",padding:"12px 0",color:"#7a9ac0",fontSize:8}},
+      "Pool único · FII: ",fiiRate,"% a.m. · INSS/IRRF estimados · Simulação dinâmica: Mai/2026 → Dez/2060"
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
