@@ -1,38 +1,315 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel Financeiro Klein</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>// KLEIN_FINANCE.SYS</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg:#0a0d0a;
+  --bg2:#12171a;
+  --panel:#1a1f22;
+  --panel2:#22282c;
+  --line:#2a3138;
+  --neon:#c5f82a;
+  --neon2:#9be005;
+  --neon-dim:#6b8c0e;
+  --text:#e8eae8;
+  --text-dim:#8a928c;
+  --text-faint:#5a625c;
+  --red:#ff3b3b;
+  --amber:#ffb020;
+  --cyan:#2af8e8;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#e8f0fb;color:#1a2a4a;font-family:'Inter',system-ui,sans-serif;min-height:100vh}
-#root{padding:12px;max-width:720px;margin:0 auto}
-button{cursor:pointer;transition:all .2s}button:hover{opacity:.85}
-::-webkit-scrollbar{height:4px;width:4px}::-webkit-scrollbar-track{background:#c8d8f0;border-radius:4px}::-webkit-scrollbar-thumb{background:#2d6bc4;border-radius:4px}
-.sep{height:1px;background:linear-gradient(90deg,transparent,#2d6bc4,transparent);margin:16px 0}
-input[type=number]{background:#f0f5ff;border:1.5px solid #b8cef0;border-radius:8px;color:#1a2a4a;padding:10px 12px;font-size:16px;font-weight:600;width:100%;font-family:'Inter',inherit;transition:border-color .2s,box-shadow .2s;-moz-appearance:textfield}
-input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
-input[type=number]:focus{outline:none;border-color:#2d6bc4;box-shadow:0 0 0 3px #2d6bc430}
-input[type=number].accent-green:focus{border-color:#00b894;box-shadow:0 0 0 3px #00b89430}
-input[type=number].accent-pink:focus{border-color:#0984e3;box-shadow:0 0 0 3px #0984e330}
-input[type=number].accent-amber:focus{border-color:#00cec9;box-shadow:0 0 0 3px #00cec930}
-input[type=number].accent-violet:focus{border-color:#6c5ce7;box-shadow:0 0 0 3px #6c5ce730}
-input[type=number].accent-red:focus{border-color:#d63031;box-shadow:0 0 0 3px #d6303130}
-.inp-label{font-size:9px;color:#5a7ab0;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:4px}
-.inp-hint{font-size:8px;color:#7a9ac0;margin-top:2px}
-.inp-group{margin-bottom:12px}
+html,body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* Grid/circuit background */
+body::before{
+content:””;position:fixed;inset:0;pointer-events:none;z-index:0;
+background-image:
+linear-gradient(rgba(197,248,42,.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(197,248,42,.025) 1px,transparent 1px);
+background-size:32px 32px;
+}
+body::after{
+content:””;position:fixed;inset:0;pointer-events:none;z-index:0;
+background:radial-gradient(ellipse at 20% 0%,rgba(197,248,42,.08),transparent 50%),
+radial-gradient(ellipse at 80% 100%,rgba(42,248,232,.04),transparent 50%);
+}
+
+#root{position:relative;z-index:1;padding:10px;max-width:760px;margin:0 auto}
+
+button{cursor:pointer;font-family:inherit;transition:all .15s ease}
+
+/* Scroll */
+::-webkit-scrollbar{height:4px;width:4px}
+::-webkit-scrollbar-track{background:var(–panel)}
+::-webkit-scrollbar-thumb{background:var(–neon);border-radius:0}
+
+/* Inputs — tech style */
+input[type=number]{
+background:var(–bg2);
+border:1px solid var(–line);
+border-left:3px solid var(–neon);
+color:var(–text);
+padding:10px 12px;
+font-size:15px;
+font-weight:600;
+width:100%;
+font-family:‘JetBrains Mono’,monospace;
+transition:all .2s;
+-moz-appearance:textfield;
+clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]:focus{
+outline:none;
+border-color:var(–neon);
+border-left-color:var(–neon);
+background:#181e18;
+box-shadow:0 0 0 1px var(–neon),0 0 20px rgba(197,248,42,.2);
+}
+
+.inp-label{
+font-family:‘Orbitron’,sans-serif;
+font-size:9px;
+color:var(–neon);
+text-transform:uppercase;
+letter-spacing:2px;
+font-weight:700;
+margin-bottom:6px;
+display:flex;align-items:center;gap:6px;
+}
+.inp-label::before{
+content:””;width:6px;height:6px;background:var(–neon);
+clip-path:polygon(0 0,100% 0,50% 100%);
+}
+.inp-hint{
+font-family:‘JetBrains Mono’,monospace;
+font-size:9px;color:var(–text-faint);margin-top:4px;
+padding-left:8px;border-left:1px solid var(–line);
+}
+.inp-group{margin-bottom:14px}
 .inp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:420px){.inp-row{grid-template-columns:1fr}}
-.live-dot{width:6px;height:6px;background:#00b894;border-radius:50%;display:inline-block;animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fade-up{animation:fadeUp .3s ease}
-.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #d0e0f5;box-shadow:0 2px 8px #2d6bc415}
-.card-blue{background:linear-gradient(135deg,#1a3a6c,#2d6bc4);color:#fff;border:none}
-.card-teal{background:linear-gradient(135deg,#006d6a,#00b894);color:#fff;border:none}
-.card-red{background:linear-gradient(135deg,#8b0000,#d63031);color:#fff;border:none}
+
+/* Live dot */
+.live-dot{
+width:8px;height:8px;background:var(–neon);display:inline-block;
+box-shadow:0 0 10px var(–neon);
+animation:pulse 1.2s infinite;
+clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
+
+@keyframes glitch-in{
+0%{opacity:0;transform:translateY(6px) skewX(-2deg);clip-path:inset(0 100% 0 0)}
+50%{clip-path:inset(0 0 0 0)}
+100%{opacity:1;transform:translateY(0) skewX(0);clip-path:inset(0 0 0 0)}
+}
+.fade-up{animation:glitch-in .4s ease-out}
+
+/* Panels — chanfered / tech frames */
+.panel{
+background:var(–panel);
+border:1px solid var(–line);
+padding:16px;
+margin-bottom:12px;
+position:relative;
+clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
+}
+.panel::before{
+content:””;position:absolute;top:8px;left:8px;width:10px;height:10px;
+border-top:1.5px solid var(–neon);border-left:1.5px solid var(–neon);
+}
+.panel::after{
+content:””;position:absolute;bottom:8px;right:8px;width:10px;height:10px;
+border-bottom:1.5px solid var(–neon);border-right:1.5px solid var(–neon);
+}
+.panel-neon{
+background:linear-gradient(135deg,#1a2008,#2d3a0a);
+border:1px solid var(–neon);
+color:var(–text);
+}
+.panel-red{
+background:linear-gradient(135deg,#2a0808,#3a0f0f);
+border:1px solid var(–red);
+}
+.panel-cyan{
+background:linear-gradient(135deg,#072020,#0a2d2d);
+border:1px solid var(–cyan);
+}
+
+/* Headers */
+.h-title{
+font-family:‘Orbitron’,sans-serif;
+font-weight:900;
+letter-spacing:1px;
+text-transform:uppercase;
+}
+
+/* Tech corner markers */
+.corner-marker{
+position:relative;padding-left:14px;
+}
+.corner-marker::before{
+content:””;position:absolute;left:0;top:50%;transform:translateY(-50%);
+width:8px;height:8px;background:var(–neon);
+clip-path:polygon(0 0,100% 50%,0 100%);
+}
+
+/* Hex/angled button */
+.tech-btn{
+padding:8px 14px;
+background:var(–panel);
+border:1px solid var(–line);
+color:var(–text-dim);
+font-family:‘Orbitron’,sans-serif;
+font-size:9px;
+font-weight:700;
+letter-spacing:1.5px;
+text-transform:uppercase;
+white-space:nowrap;
+clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+position:relative;
+}
+.tech-btn:hover{color:var(–neon);border-color:var(–neon-dim)}
+.tech-btn.active{
+background:var(–neon);
+color:var(–bg);
+border-color:var(–neon);
+box-shadow:0 0 20px rgba(197,248,42,.4);
+}
+
+/* Chain decor */
+.chain-decor{
+position:absolute;
+right:-10px;top:-10px;
+width:50px;height:50px;
+opacity:.15;
+pointer-events:none;
+}
+
+/* Section label — like “ON/OFF” from poster */
+.onoff-label{
+display:inline-flex;align-items:center;gap:8px;
+padding:4px 10px;
+background:var(–bg2);
+border:1px solid var(–line);
+font-family:‘Orbitron’,sans-serif;
+font-size:9px;
+font-weight:700;
+letter-spacing:2px;
+color:var(–text-dim);
+clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+}
+.onoff-label .dot{
+width:6px;height:6px;border-radius:50%;background:var(–neon);
+box-shadow:0 0 8px var(–neon);
+}
+
+.mono{font-family:‘JetBrains Mono’,monospace}
+.disp{font-family:‘Orbitron’,sans-serif;font-weight:900;letter-spacing:2px}
+
+/* Progress bar */
+.progress{
+height:6px;background:var(–bg2);border:1px solid var(–line);position:relative;overflow:hidden;
+}
+.progress-fill{
+height:100%;
+background:linear-gradient(90deg,var(–neon) 0%,var(–amber) 60%,var(–red) 100%);
+box-shadow:0 0 10px var(–neon);
+}
+
+.kv-card{
+padding:10px 12px;
+background:var(–bg2);
+border:1px solid var(–line);
+border-left:3px solid var(–neon);
+position:relative;
+}
+.kv-card::after{
+content:””;position:absolute;top:0;right:0;border-top:8px solid var(–line);border-left:8px solid transparent;
+}
+
+/* Tab scroll */
+.tab-scroll{
+display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding:4px 0 8px;
+scrollbar-width:thin;
+}
+
+/* Headline treatment */
+.hero-title{
+font-family:‘Orbitron’,sans-serif;
+font-weight:900;
+font-size:38px;
+line-height:.9;
+letter-spacing:2px;
+color:var(–text);
+text-transform:uppercase;
+position:relative;
+display:inline-block;
+}
+.hero-title .accent{color:var(–neon);text-shadow:0 0 20px rgba(197,248,42,.5)}
+.hero-sub{
+display:inline-block;
+background:var(–neon);
+color:var(–bg);
+padding:4px 12px;
+font-family:‘Orbitron’,sans-serif;
+font-size:10px;
+font-weight:700;
+letter-spacing:2px;
+text-transform:uppercase;
+margin-top:8px;
+clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
+}
+
+/* Frame with bracket corners */
+.frame-brackets{position:relative;padding:14px}
+.frame-brackets::before,.frame-brackets::after,
+.frame-brackets > .br-tl,.frame-brackets > .br-br{
+content:””;position:absolute;width:14px;height:14px;border:2px solid var(–neon);
+}
+.frame-brackets::before{top:0;left:0;border-right:none;border-bottom:none}
+.frame-brackets::after{bottom:0;right:0;border-left:none;border-top:none}
+.frame-brackets > .br-tr{position:absolute;top:0;right:0;width:14px;height:14px;border:2px solid var(–neon);border-left:none;border-bottom:none}
+.frame-brackets > .br-bl{position:absolute;bottom:0;left:0;width:14px;height:14px;border:2px solid var(–neon);border-right:none;border-top:none}
+
+.divider-tech{
+display:flex;align-items:center;gap:10px;margin:18px 0 12px;
+}
+.divider-tech .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(–line),transparent)}
+.divider-tech .txt{font-family:‘Orbitron’,sans-serif;font-size:9px;letter-spacing:3px;color:var(–text-dim);text-transform:uppercase}
+.divider-tech .dot{width:6px;height:6px;background:var(–neon);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+
+/* Row items */
+.row-item{
+padding:10px 12px;
+background:var(–bg2);
+border:1px solid var(–line);
+margin-bottom:6px;
+position:relative;
+transition:all .2s;
+}
+.row-item:hover{border-color:var(–neon-dim);background:#1d2320}
+.row-item.active{border-color:var(–neon);box-shadow:inset 3px 0 0 var(–neon)}
+
+/* Badge */
+.badge{
+display:inline-block;padding:2px 8px;
+font-family:‘Orbitron’,sans-serif;font-size:8px;font-weight:700;letter-spacing:1.5px;
+text-transform:uppercase;
+clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);
+}
+.badge-neon{background:var(–neon);color:var(–bg)}
+.badge-red{background:var(–red);color:#fff}
+.badge-cyan{background:var(–cyan);color:var(–bg)}
+
 </style>
 </head>
 <body>
@@ -44,10 +321,10 @@ input[type=number].accent-red:focus{border-color:#d63031;box-shadow:0 0 0 3px #d
 <script type="text/babel">
 const{useState,useMemo,useRef,useEffect}=React;
 
-const MP=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const MP=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
 const mk=(y,m)=>y*12+m;
 const fk=k=>[Math.floor(k/12),k%12];
-const fm=(y,m)=>`${MP[m]}/${y}`;
+const fm=(y,m)=>`${MP[m]}/${String(y).slice(-2)}`;
 const R$=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 
 const S1=[1296.34,1279.43,1262.18,1245.72,1228.93,1212.36,1196.55,1180.42,1165.02,1149.32,1133.83,1120.01,1104.92,1090.50,1075.80,1061.77,1047.46,1033.34,1019.86,1006.11,992.99,979.60,966.40,954.21,941.35,929.07,916.55,904.59,892.40,880.37,868.88,857.17,845.99,834.59,823.34,813.31,802.34,791.88,781.20,771.01,760.62,750.37,740.58,730.60,721.07,711.35,701.76,693.21,683.87,674.94,665.85,657.16,648.30,639.57,631.22,622.71,614.59,606.31,598.13,590.85,582.88,575.28,567.53,560.12,552.57,545.12,538.01,530.76,523.84,516.78,509.81,503.38,496.60,490.12,483.51,477.20,470.77,464.43];
@@ -56,28 +333,28 @@ const S3=[63.53,62.48,61.41,60.39,59.35,58.33,57.37,56.38,55.45,54.50,53.56,52.7
 const JP=[629.60,618.25,607.45,596.50,585.74,575.52,565.14,555.28,545.27,535.43,526.70,517.21,508.18,499.02,490.31,481.46,472.78,464.53,456.15,448.19,440.11,432.17,424.88,417.22,409.93,402.54,395.52,388.38,381.38,374.72,367.97,361.54,355.02,348.62,342.94,336.76,330.88,324.91,319.24,313.48,307.83,302.46,297.00,291.82,286.56,281.39];
 
 const LOANS_DEF=[
-  {id:"sant1",name:"Sant. Consig. 1",owner:"Erwin",inst:"Santander",rate:1.3219,bal:63288.88,startK:mk(2026,4),sched:S1,color:"#d63031"},
-  {id:"sant2",name:"Sant. Consig. 2",owner:"Erwin",inst:"Santander",rate:1.7165,bal:3136.90,startK:mk(2026,4),sched:S2,color:"#e17055"},
-  {id:"sant3",name:"Sant. Consig. 3",owner:"Erwin",inst:"Santander",rate:1.6876,bal:2786.22,startK:mk(2026,4),sched:S3,color:"#fab1a0"},
-  {id:"jeep",name:"Sant. Jeep",owner:"Erwin",inst:"Santander",rate:1.77,bal:19913.98,startK:mk(2026,4),sched:JP,color:"#c0392b"},
-  {id:"bb1",name:"BB Consig. EK1",owner:"Erwin",inst:"BB",rate:2.68,bal:22277.66,startK:mk(2026,4),sched:Array(48).fill(852.61),color:"#f39c12"},
-  {id:"bb2",name:"BB Consig. EK2",owner:"Erwin",inst:"BB",rate:2.73,bal:4119.88,startK:mk(2026,4),sched:Array(48).fill(159.26),color:"#e67e22"},
-  {id:"bb3",name:"BB Consig. EK3",owner:"Erwin",inst:"BB",rate:3.27,bal:2060.40,startK:mk(2026,4),sched:Array(48).fill(90.47),color:"#d35400"},
-  {id:"bbrk",name:"BB Consig. RK",owner:"Raquel",inst:"BB",rate:3.22,bal:20950,startK:mk(2026,6),sched:Array(37).fill(977.39),color:"#8e44ad"},
-  {id:"barra",name:"Barracred RK",owner:"Raquel",inst:"Barracred",rate:0.5,bal:11808.78,startK:mk(2026,4),sched:Array(16).fill(707.53),color:"#27ae60"},
+  {id:"sant1",name:"SANT.CONSIG.01",owner:"ERWIN",inst:"Santander",rate:1.3219,bal:63288.88,startK:mk(2026,4),sched:S1,color:"#ff3b3b"},
+  {id:"sant2",name:"SANT.CONSIG.02",owner:"ERWIN",inst:"Santander",rate:1.7165,bal:3136.90,startK:mk(2026,4),sched:S2,color:"#ff6b6b"},
+  {id:"sant3",name:"SANT.CONSIG.03",owner:"ERWIN",inst:"Santander",rate:1.6876,bal:2786.22,startK:mk(2026,4),sched:S3,color:"#ff9b9b"},
+  {id:"jeep",name:"SANT.JEEP",owner:"ERWIN",inst:"Santander",rate:1.77,bal:19913.98,startK:mk(2026,4),sched:JP,color:"#e74c3c"},
+  {id:"bb1",name:"BB.CONSIG.EK1",owner:"ERWIN",inst:"BB",rate:2.68,bal:22277.66,startK:mk(2026,4),sched:Array(48).fill(852.61),color:"#ffb020"},
+  {id:"bb2",name:"BB.CONSIG.EK2",owner:"ERWIN",inst:"BB",rate:2.73,bal:4119.88,startK:mk(2026,4),sched:Array(48).fill(159.26),color:"#ff9500"},
+  {id:"bb3",name:"BB.CONSIG.EK3",owner:"ERWIN",inst:"BB",rate:3.27,bal:2060.40,startK:mk(2026,4),sched:Array(48).fill(90.47),color:"#ff7700"},
+  {id:"bbrk",name:"BB.CONSIG.RK",owner:"RAQUEL",inst:"BB",rate:3.22,bal:20950,startK:mk(2026,6),sched:Array(37).fill(977.39),color:"#c5f82a"},
+  {id:"barra",name:"BARRACRED.RK",owner:"RAQUEL",inst:"Barracred",rate:0.5,bal:11808.78,startK:mk(2026,4),sched:Array(16).fill(707.53),color:"#2af8e8"},
 ];
 
 const FIXED_EXP_DEF=[
-  {id:"aluguel",name:"Aluguel + Cond.",val:2160,growthRate:5,isLoan:false},
-  {id:"luz",name:"Luz",val:320,growthRate:4,isLoan:false},
-  {id:"gas",name:"Gás",val:30,growthRate:3,isLoan:false},
-  {id:"colegio",name:"Colégio Objetivo",val:1934.50,growthRate:10,isLoan:false},
-  {id:"mercado",name:"Mercado/Comida",val:1886,growthRate:5,isLoan:false},
-  {id:"cartoes",name:"Cartões",val:450,growthRate:3,isLoan:false},
-  {id:"jeep_parc",name:"Parcela Jeep",val:643.80,growthRate:0,isLoan:true},
-  {id:"combustivel",name:"Combustível",val:400,growthRate:4,isLoan:false},
-  {id:"vivo",name:"Vivo",val:270,growthRate:3,isLoan:false},
-  {id:"outros",name:"Outros",val:0,growthRate:3,isLoan:false},
+  {id:"aluguel",name:"ALUGUEL + COND.",val:2160,growthRate:5,isLoan:false},
+  {id:"luz",name:"LUZ",val:320,growthRate:4,isLoan:false},
+  {id:"gas",name:"GÁS",val:30,growthRate:3,isLoan:false},
+  {id:"colegio",name:"COLÉGIO OBJETIVO",val:1934.50,growthRate:10,isLoan:false},
+  {id:"mercado",name:"MERCADO/COMIDA",val:1886,growthRate:5,isLoan:false},
+  {id:"cartoes",name:"CARTÕES",val:450,growthRate:3,isLoan:false},
+  {id:"jeep_parc",name:"PARCELA JEEP",val:643.80,growthRate:0,isLoan:true},
+  {id:"combustivel",name:"COMBUSTÍVEL",val:400,growthRate:4,isLoan:false},
+  {id:"vivo",name:"VIVO",val:270,growthRate:3,isLoan:false},
+  {id:"outros",name:"OUTROS",val:0,growthRate:3,isLoan:false},
 ];
 
 function calcExpense(exp,mo){return exp.val*Math.pow(1+exp.growthRate/100,mo/12);}
@@ -148,7 +425,7 @@ function runSim(params){
   return{months,milestones,debtFreeK};
 }
 
-function Inp({label,value,onChange,hint,accent,prefix,step,small}){
+function Inp({label,value,onChange,hint,prefix,step,small}){
   const[local,setLocal]=useState(String(value));
   const timer=useRef(null);
   useEffect(()=>{setLocal(String(value));},[value]);
@@ -157,11 +434,11 @@ function Inp({label,value,onChange,hint,accent,prefix,step,small}){
     clearTimeout(timer.current);
     timer.current=setTimeout(()=>{const n=parseFloat(v);if(!isNaN(n))onChange(n);},2000);
   };
-  return React.createElement('div',{className:'inp-group',style:small?{marginBottom:6}:{}},
+  return React.createElement('div',{className:'inp-group',style:small?{marginBottom:8}:{}},
     label&&React.createElement('div',{className:'inp-label'},label),
     React.createElement('div',{style:{position:'relative'}},
-      prefix&&React.createElement('span',{style:{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:'#5a7ab0',fontSize:11,fontWeight:700,pointerEvents:'none'}},prefix),
-      React.createElement('input',{type:'number',value:local,onChange:handle,className:accent?'accent-'+accent:'',style:{paddingLeft:prefix?34:12,paddingRight:12,paddingTop:small?7:10,paddingBottom:small?7:10,fontSize:small?13:16},step:step||'any'})
+      prefix&&React.createElement('span',{style:{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--neon)',fontSize:10,fontWeight:700,pointerEvents:'none',fontFamily:"'JetBrains Mono',monospace",zIndex:1}},prefix),
+      React.createElement('input',{type:'number',value:local,onChange:handle,style:{paddingLeft:prefix?36:14,paddingTop:small?7:10,paddingBottom:small?7:10,fontSize:small?13:15},step:step||'any'})
     ),
     hint&&React.createElement('div',{className:'inp-hint'},hint)
   );
@@ -171,36 +448,36 @@ function ExpenseEditor({exps,onChange}){
   const totalNow=exps.reduce((s,e)=>s+e.val,0);
   const total2034=calcTotalFixedAtMonth(exps,108);
   return React.createElement('div',null,
-    React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr auto 80px",gap:8,marginBottom:8,padding:"0 10px"}},
-      React.createElement('div',{style:{fontSize:9,color:"#5a7ab0",fontWeight:700,textTransform:"uppercase"}},"Valor atual"),
-      React.createElement('div',{style:{fontSize:9,color:"#5a7ab0",fontWeight:700,textTransform:"uppercase",textAlign:"center"}},"Cresc. a.a."),
-      React.createElement('div',{style:{fontSize:9,color:"#2d6bc4",fontWeight:700,textTransform:"uppercase",textAlign:"right"}},"Em 2034")
+    React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr auto 80px",gap:8,marginBottom:8,padding:"0 4px"}},
+      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon)",letterSpacing:1.5}},"> VAL.ATUAL"),
+      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon)",letterSpacing:1.5,textAlign:"center"}},"CRESC.%"),
+      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--cyan)",letterSpacing:1.5,textAlign:"right"}},"EM.2034")
     ),
     exps.map((exp,idx)=>{
       const val2034=calcExpense(exp,108);
       const upd=(field,val)=>{const cp=[...exps];cp[idx]={...cp[idx],[field]:val};onChange(cp);};
-      return React.createElement('div',{key:exp.id,style:{background:"#f0f5ff",borderRadius:10,padding:"8px 10px",marginBottom:6,border:"1px solid "+(exp.isLoan?"#2d6bc450":"#d0e0f5")}},
-        React.createElement('div',{style:{fontSize:10,fontWeight:700,color:exp.isLoan?"#2d6bc4":"#1a2a4a",marginBottom:5}},
-          exp.name,exp.isLoan&&React.createElement('span',{style:{fontSize:8,color:"#7a9ac0",marginLeft:4}},"(pool)")
+      return React.createElement('div',{key:exp.id,style:{background:"var(--bg2)",padding:"10px 12px",marginBottom:6,border:"1px solid var(--line)",borderLeft:"3px solid "+(exp.isLoan?"var(--cyan)":"var(--neon-dim)")}},
+        React.createElement('div',{style:{fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:exp.isLoan?"var(--cyan)":"var(--text)",marginBottom:6,letterSpacing:1}},
+          exp.name,exp.isLoan&&React.createElement('span',{style:{fontSize:8,color:"var(--text-faint)",marginLeft:6}},"[POOL]")
         ),
         React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr 80px",gap:6,alignItems:"center"}},
-          React.createElement(Inp,{value:exp.val,onChange:v=>upd("val",v),prefix:"R$",accent:"amber",small:true}),
+          React.createElement(Inp,{value:exp.val,onChange:v=>upd("val",v),prefix:"R$",small:true}),
           React.createElement('div',{style:{display:"flex",alignItems:"center",gap:4}},
-            React.createElement(Inp,{value:exp.growthRate,onChange:v=>upd("growthRate",v),accent:"violet",small:true,step:"0.1"}),
-            React.createElement('span',{style:{fontSize:10,color:"#7a9ac0",flexShrink:0}},"% a.a.")
+            React.createElement(Inp,{value:exp.growthRate,onChange:v=>upd("growthRate",v),small:true,step:"0.1"}),
+            React.createElement('span',{style:{fontSize:10,color:"var(--text-faint)",flexShrink:0,fontFamily:"'JetBrains Mono',monospace"}},"%/a")
           ),
-          React.createElement('div',{style:{textAlign:"right",fontSize:11,fontWeight:700,color:exp.growthRate>0?"#2d6bc4":"#7a9ac0"}},R$(val2034))
+          React.createElement('div',{className:"mono",style:{textAlign:"right",fontSize:11,fontWeight:700,color:exp.growthRate>0?"var(--cyan)":"var(--text-faint)"}},R$(val2034))
         )
       );
     }),
-    React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"10px 12px",background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",borderRadius:10,marginTop:4}},
+    React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:"linear-gradient(135deg,#1a2008,#2d3a0a)",border:"1px solid var(--neon)",marginTop:8,clipPath:"polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)"}},
       React.createElement('div',null,
-        React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"Total Atual"),
-        React.createElement('div',{style:{fontSize:14,fontWeight:800,color:"#fff"}},R$(totalNow))
+        React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:2}},"> TOTAL.NOW"),
+        React.createElement('div',{className:"mono",style:{fontSize:14,fontWeight:800,color:"var(--text)"}},R$(totalNow))
       ),
       React.createElement('div',{style:{textAlign:"right"}},
-        React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"Total em 2034"),
-        React.createElement('div',{style:{fontSize:14,fontWeight:800,color:"#7dd3fa"}},R$(total2034))
+        React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:2}},"TOTAL.2034 <"),
+        React.createElement('div',{className:"mono",style:{fontSize:14,fontWeight:800,color:"var(--neon)"}},R$(total2034))
       )
     )
   );
@@ -239,393 +516,506 @@ function App(){
   const surplusNow=Math.max(0,incomeNow-fixedNow-livingMin);
 
   const tabs=[
-    {id:"inputs",i:"⚙️",l:"Inputs"},
-    {id:"gastos",i:"💸",l:"Gastos"},
-    {id:"resumo",i:"📊",l:"Resumo"},
-    {id:"orcamento",i:"💰",l:"Orçamento"},
-    {id:"projecao",i:"📅",l:"Projeção"},
-    {id:"marcos",i:"🏆",l:"Marcos"},
-    {id:"patrimonio",i:"📈",l:"Patrimônio"},
-    {id:"analise",i:"🧠",l:"Análise"},
+    {id:"inputs",l:"INPUTS"},
+    {id:"gastos",l:"GASTOS"},
+    {id:"resumo",l:"RESUMO"},
+    {id:"orcamento",l:"ORÇAMENTO"},
+    {id:"projecao",l:"PROJEÇÃO"},
+    {id:"marcos",l:"MARCOS"},
+    {id:"patrimonio",l:"PATRIMÔNIO"},
+    {id:"analise",l:"ANÁLISE"},
   ];
 
-  // Card components
-  const C=({children,style,cls})=>React.createElement('div',{className:'card '+(cls||''),style},children);
-  const Lb=({children,light})=>React.createElement('div',{style:{fontSize:10,color:light?"#a0c0f0":"#5a7ab0",textTransform:"uppercase",letterSpacing:1,marginBottom:8,fontWeight:700}},children);
-  const KV=({label,value,color,light})=>React.createElement('div',{style:{padding:10,background:light?"rgba(255,255,255,.12)":"#f0f5ff",borderRadius:10,border:light?"none":"1px solid #d0e0f5"}},
-    React.createElement('div',{style:{fontSize:9,color:light?"#a0c0f0":"#7a9ac0",textTransform:"uppercase",fontWeight:700}},label),
-    React.createElement('div',{style:{fontSize:14,fontWeight:800,color:color||(light?"#fff":"#1a2a4a"),marginTop:2}},value)
+  const Lb=({children,accent})=>React.createElement('div',{className:"disp",style:{fontSize:10,color:accent||"var(--neon)",letterSpacing:2,marginBottom:12,display:"flex",alignItems:"center",gap:8,textTransform:"uppercase"}},
+    React.createElement('span',{style:{width:10,height:10,background:accent||"var(--neon)",clipPath:"polygon(0 0,100% 0,100% 50%,50% 100%,0 50%)",display:"inline-block"}}),
+    children
   );
 
-  return React.createElement('div',null,
-    /* Header */
-    React.createElement('header',{style:{background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",borderRadius:16,padding:"18px 16px",marginBottom:14,textAlign:"center",boxShadow:"0 4px 20px #2d6bc440"}},
-      React.createElement('h1',{style:{fontFamily:"'Playfair Display',serif",fontSize:22,margin:0,color:"#fff",letterSpacing:1}},"Painel Financeiro Klein"),
-      React.createElement('p',{style:{color:"#a0c0f0",fontSize:10,margin:"4px 0"}},"Da dívida ao patrimônio — Simulação dinâmica até 2060"),
-      React.createElement('div',{style:{marginTop:6,display:"flex",alignItems:"center",justifyContent:"center",gap:6}},
-        React.createElement('span',{className:'live-dot'}),
-        React.createElement('span',{style:{fontSize:9,color:"#7df0c0",fontWeight:700}},"Cálculos em tempo real")
+  const KV=({label,value,color})=>React.createElement('div',{className:"kv-card",style:{borderLeftColor:color||"var(--neon)"}},
+    React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1.5,marginBottom:4}},label),
+    React.createElement('div',{className:"mono",style:{fontSize:14,fontWeight:800,color:color||"var(--text)"}},value)
+  );
+
+  return React.createElement('div',{className:"fade-up"},
+
+    /* ═══════ HEADER (like poster) ═══════ */
+    React.createElement('header',{style:{marginBottom:16,position:"relative"}},
+      // ON/OFF strip
+      React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}},
+        React.createElement('div',{className:"onoff-label"},
+          React.createElement('span',{className:"dot"}),
+          "SYS.ONLINE"
+        ),
+        React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},
+          "// KLEIN.FIN.v2.60"
+        )
+      ),
+      // Big hero
+      React.createElement('div',{style:{background:"linear-gradient(135deg,#1a1f22 0%,#12171a 100%)",border:"1px solid var(--line)",padding:"24px 20px",position:"relative",clipPath:"polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px)",overflow:"hidden"}},
+        // Decorative circuit lines
+        React.createElement('svg',{style:{position:"absolute",top:8,right:8,opacity:.4,pointerEvents:"none"},width:"80",height:"80",viewBox:"0 0 80 80"},
+          React.createElement('circle',{cx:"60",cy:"20",r:"3",fill:"var(--neon)"}),
+          React.createElement('circle',{cx:"20",cy:"60",r:"2",fill:"var(--neon)"}),
+          React.createElement('path',{d:"M60 20 L60 40 L30 40 L30 60 L20 60",stroke:"var(--neon)",strokeWidth:"1",fill:"none"}),
+          React.createElement('path',{d:"M10 10 L40 10 L40 25",stroke:"var(--neon-dim)",strokeWidth:"1",fill:"none"})
+        ),
+        React.createElement('div',{className:"hero-title"},
+          "FIN",React.createElement('span',{className:"accent"},"ANCE"),React.createElement('br'),
+          "KLEIN ",React.createElement('span',{style:{color:"var(--text-dim)"}},"//")
+        ),
+        React.createElement('div',{className:"hero-sub"},"DA DÍVIDA AO PATRIMÔNIO"),
+        React.createElement('div',{style:{marginTop:14,display:"flex",alignItems:"center",gap:10,paddingTop:12,borderTop:"1px dashed var(--line)"}},
+          React.createElement('span',{className:"live-dot"}),
+          React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--neon)",fontWeight:600}},"REAL-TIME.COMPUTE"),
+          React.createElement('span',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginLeft:"auto"}},"2026 → 2060")
+        )
       )
     ),
 
-    /* Nav */
-    React.createElement('div',{style:{display:"flex",gap:4,marginBottom:12,overflowX:"auto",paddingBottom:4}},
-      tabs.map(t=>React.createElement('button',{key:t.id,onClick:()=>setTab(t.id),style:{padding:"7px 10px",borderRadius:20,border:"none",fontSize:10,fontWeight:700,whiteSpace:"nowrap",background:tab===t.id?"linear-gradient(135deg,#1a3a6c,#2d6bc4)":"#fff",color:tab===t.id?"#fff":"#2d6bc4",boxShadow:tab===t.id?"0 2px 8px #2d6bc440":"0 1px 3px #0002",border:tab===t.id?"none":"1px solid #d0e0f5"}},t.i," ",t.l))
+    /* ═══════ NAV TABS ═══════ */
+    React.createElement('div',{className:"tab-scroll"},
+      tabs.map(t=>React.createElement('button',{key:t.id,onClick:()=>setTab(t.id),className:"tech-btn"+(tab===t.id?" active":"")},t.l))
     ),
 
-    /* ═══ INPUTS ═══ */
+    /* ══════════════ INPUTS ══════════════ */
     tab==="inputs"&&React.createElement(React.Fragment,null,
-      React.createElement(C,{cls:"",style:{borderLeft:"4px solid #00b894"}},
-        React.createElement(Lb,null,"💰 Renda Bruta Atual"),
+      React.createElement('div',{className:"panel panel-neon"},
+        React.createElement(Lb,null,"[01] RENDA.BRUTA.ATUAL"),
         React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"Salário Bruto Raquel",value:raquelBruto,onChange:setRaquelBruto,hint:`Líquido: ${R$(netS(raquelBruto))}`,accent:"green",prefix:"R$"}),
-          React.createElement(Inp,{label:"Salário Bruto Erwin",value:erwinBruto,onChange:setErwinBruto,hint:`Líquido: ${R$(netS(erwinBruto))}`,accent:"green",prefix:"R$"})
+          React.createElement(Inp,{label:"SAL.BRUTO.RAQUEL",value:raquelBruto,onChange:setRaquelBruto,hint:`NET: ${R$(netS(raquelBruto))}`,prefix:"R$"}),
+          React.createElement(Inp,{label:"SAL.BRUTO.ERWIN",value:erwinBruto,onChange:setErwinBruto,hint:`NET: ${R$(netS(erwinBruto))}`,prefix:"R$"})
         ),
         React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"Vale Alimentação Raquel",value:vaRaquel,onChange:setVaRaquel,accent:"green",prefix:"R$"}),
-          React.createElement(Inp,{label:"Vale Alimentação Erwin",value:vaErwin,onChange:setVaErwin,accent:"green",prefix:"R$"})
+          React.createElement(Inp,{label:"VA.RAQUEL",value:vaRaquel,onChange:setVaRaquel,prefix:"R$"}),
+          React.createElement(Inp,{label:"VA.ERWIN",value:vaErwin,onChange:setVaErwin,prefix:"R$"})
         ),
-        React.createElement(Inp,{label:"PPR Raquel (multiplicador do bruto)",value:pprMultiplier,onChange:setPprMultiplier,hint:`PPR bruto: ${R$(raquelBruto*pprMultiplier)} → Líquido: ${R$(netPPR(raquelBruto*pprMultiplier))} (pago em Abril)`,accent:"green",step:"0.1"})
+        React.createElement(Inp,{label:"PPR.RAQUEL.MULT",value:pprMultiplier,onChange:setPprMultiplier,hint:`PPR bruto: ${R$(raquelBruto*pprMultiplier)} → Net: ${R$(netPPR(raquelBruto*pprMultiplier))} [ABR]`,step:"0.1"})
       ),
-      React.createElement(C,{style:{borderLeft:"4px solid #2d6bc4"}},
-        React.createElement(Lb,null,"📈 Projeção Salarial — 2034 (40 anos)"),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,{accent:"var(--cyan)"},"[02] PROJEÇÃO.2034 // 40.ANOS"),
         React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"Meta Bruto Raquel em 2034",value:raquelTarget,onChange:setRaquelTarget,hint:`Líquido projetado: ${R$(netS(raquelTarget))}`,accent:"pink",prefix:"R$"}),
-          React.createElement(Inp,{label:"Meta Bruto Erwin em 2034",value:erwinTarget,onChange:setErwinTarget,hint:`Líquido projetado: ${R$(netS(erwinTarget))}`,accent:"pink",prefix:"R$"})
+          React.createElement(Inp,{label:"META.RAQUEL.2034",value:raquelTarget,onChange:setRaquelTarget,hint:`NET: ${R$(netS(raquelTarget))}`,prefix:"R$"}),
+          React.createElement(Inp,{label:"META.ERWIN.2034",value:erwinTarget,onChange:setErwinTarget,hint:`NET: ${R$(netS(erwinTarget))}`,prefix:"R$"})
         ),
-        React.createElement('div',{style:{background:"#e8f0fb",borderRadius:10,padding:10,marginTop:4,border:"1px solid #d0e0f5"}},
-          React.createElement('div',{style:{fontSize:9,color:"#2d6bc4",fontWeight:700,marginBottom:4}},"CRESCIMENTO LINEAR (60 MESES)"),
-          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:2}},
-            React.createElement('span',{style:{color:"#5a7ab0"}},"Raquel: ",R$(raquelBruto)," → ",R$(raquelTarget)),
-            React.createElement('span',{style:{color:"#00b894",fontWeight:700}},"+",((raquelTarget/Math.max(raquelBruto,1)-1)*100).toFixed(0),"%")
+        React.createElement('div',{style:{background:"var(--bg2)",padding:12,marginTop:6,border:"1px solid var(--line)",borderLeft:"3px solid var(--cyan)"}},
+          React.createElement('div',{className:"disp",style:{fontSize:9,color:"var(--cyan)",letterSpacing:2,marginBottom:8}},">> CRESC.LINEAR[60m]"),
+          React.createElement('div',{className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}},
+            React.createElement('span',{style:{color:"var(--text-dim)"}},"RAQUEL ",R$(raquelBruto)," → ",R$(raquelTarget)),
+            React.createElement('span',{style:{color:"var(--neon)",fontWeight:700}},"+",((raquelTarget/Math.max(raquelBruto,1)-1)*100).toFixed(0),"%")
           ),
-          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",fontSize:11}},
-            React.createElement('span',{style:{color:"#5a7ab0"}},"Erwin: ",R$(erwinBruto)," → ",R$(erwinTarget)),
-            React.createElement('span',{style:{color:"#00b894",fontWeight:700}},"+",((erwinTarget/Math.max(erwinBruto,1)-1)*100).toFixed(0),"%")
+          React.createElement('div',{className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:11}},
+            React.createElement('span',{style:{color:"var(--text-dim)"}},"ERWIN  ",R$(erwinBruto)," → ",R$(erwinTarget)),
+            React.createElement('span',{style:{color:"var(--neon)",fontWeight:700}},"+",((erwinTarget/Math.max(erwinBruto,1)-1)*100).toFixed(0),"%")
           )
         )
       ),
-      React.createElement(C,{style:{borderLeft:"4px solid #6c5ce7"}},
-        React.createElement(Lb,null,"🏦 Investimento & Custo de Vida"),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,{accent:"var(--amber)"},"[03] FII + LIVING.RESERVE"),
         React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"Dividend Yield FII (% ao mês)",value:fiiRate,onChange:setFiiRate,hint:`≈ ${((Math.pow(1+fiiRate/100,12)-1)*100).toFixed(1)}% ao ano`,accent:"violet",step:"0.01"}),
-          React.createElement(Inp,{label:"Reserva p/ Viver (R$/mês)",value:livingMin,onChange:setLivingMin,hint:"Após gastos fixos, quanto reservar para viver",accent:"amber",prefix:"R$"})
+          React.createElement(Inp,{label:"DY.FII.MENSAL",value:fiiRate,onChange:setFiiRate,hint:`≈ ${((Math.pow(1+fiiRate/100,12)-1)*100).toFixed(1)}% a.a.`,step:"0.01"}),
+          React.createElement(Inp,{label:"RESERVA.VIVER",value:livingMin,onChange:setLivingMin,hint:"Buffer pós-gastos fixos",prefix:"R$"})
         )
       ),
-      React.createElement('div',{className:'sep'}),
-      React.createElement('div',{style:{fontSize:11,fontWeight:800,color:"#2d6bc4",marginBottom:8,display:"flex",alignItems:"center",gap:6}},
-        React.createElement('span',{className:'live-dot'})," Prévia em Tempo Real"
+
+      React.createElement('div',{className:"divider-tech"},
+        React.createElement('div',{className:"dot"}),
+        React.createElement('div',{className:"line"}),
+        React.createElement('div',{className:"txt"},"LIVE.PREVIEW"),
+        React.createElement('div',{className:"line"}),
+        React.createElement('div',{className:"dot"})
       ),
-      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}},
-        [{l:"Renda Líquida Familiar",v:R$(incomeNow),c:"#00b894"},{l:"Gastos Fixos",v:R$(fixedNow),c:"#f39c12"},{l:"Reserva Viver",v:R$(livingMin),c:"#1a2a4a"},{l:"Sobra → Pool",v:R$(surplusNow),c:"#2d6bc4"},{l:"Dívida Total",v:R$(origDebt),c:"#d63031"},{l:"Livre em",v:debtFreeLabel,c:"#00b894"},{l:"Patrimônio 2034",v:inv2034?R$(inv2034.portfolio):"—",c:"#2d6bc4"},{l:"Rend. FII 2034",v:inv2034?R$(inv2034.yield_)+"/mês":"—",c:"#6c5ce7"}].map((x,i)=>
+      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}},
+        [{l:"RENDA.LIQUIDA",v:R$(incomeNow),c:"var(--neon)"},
+         {l:"GASTOS.FIXOS",v:R$(fixedNow),c:"var(--amber)"},
+         {l:"RES.VIVER",v:R$(livingMin),c:"var(--text)"},
+         {l:"SOBRA>POOL",v:R$(surplusNow),c:"var(--cyan)"},
+         {l:"DIVIDA.TOTAL",v:R$(origDebt),c:"var(--red)"},
+         {l:"LIVRE.EM",v:debtFreeLabel,c:"var(--neon)"},
+         {l:"PATRIM.2034",v:inv2034?R$(inv2034.portfolio):"—",c:"var(--cyan)"},
+         {l:"REND.2034/m",v:inv2034?R$(inv2034.yield_):"—",c:"var(--neon)"}].map((x,i)=>
           React.createElement(KV,{key:i,label:x.l,value:x.v,color:x.c})
         )
       )
     ),
 
-    /* ═══ GASTOS ═══ */
+    /* ══════════════ GASTOS ══════════════ */
     tab==="gastos"&&React.createElement(React.Fragment,null,
-      React.createElement(C,{style:{borderLeft:"4px solid #f39c12"}},
-        React.createElement(Lb,null,"💸 Gastos Fixos + Crescimento Anual"),
-        React.createElement('div',{style:{fontSize:9,color:"#7a9ac0",marginBottom:10,lineHeight:1.6}},"Defina o valor atual e a taxa de crescimento anual de cada gasto."),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,{accent:"var(--amber)"},"GASTOS.FIXOS + GROWTH"),
+        React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginBottom:12,lineHeight:1.6}},"// Valor atual + taxa de crescimento anual por item"),
         React.createElement(ExpenseEditor,{exps:fixedExps,onChange:setFixedExps})
       ),
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Projeção dos Gastos ao Longo do Tempo"),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"PROJ.TEMPORAL"),
         [2026,2028,2030,2032,2034,2040,2050,2060].map(yr2=>{
           const mo=(yr2-2026)*12;
           const tot=calcTotalFixedAtMonth(fixedExps,mo);
           const max=calcTotalFixedAtMonth(fixedExps,408);
-          return React.createElement('div',{key:yr2,style:{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
-            React.createElement('span',{style:{fontSize:11,fontWeight:700,width:36,flexShrink:0}},yr2),
-            React.createElement('div',{style:{flex:1,height:6,background:"#e8f0fb",borderRadius:3,overflow:"hidden"}},
-              React.createElement('div',{style:{height:"100%",width:Math.min(100,tot/max*100)+"%",background:"linear-gradient(90deg,#2d6bc4,#00cec9)",borderRadius:3}})
+          return React.createElement('div',{key:yr2,style:{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:"1px solid var(--line)"}},
+            React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,width:40,flexShrink:0,color:"var(--neon)"}},yr2),
+            React.createElement('div',{className:"progress",style:{flex:1}},
+              React.createElement('div',{className:"progress-fill",style:{width:Math.min(100,tot/max*100)+"%"}})
             ),
-            React.createElement('span',{style:{fontSize:11,color:"#2d6bc4",fontWeight:700,width:100,textAlign:"right",flexShrink:0}},R$(tot))
+            React.createElement('span',{className:"mono",style:{fontSize:11,color:"var(--text)",fontWeight:700,width:100,textAlign:"right",flexShrink:0}},R$(tot))
           );
         })
       ),
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Detalhamento por Item em 2034"),
-        fixedExps.map((e,i)=>React.createElement('div',{key:e.id,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"DETALHE.ITEM.2034"),
+        fixedExps.map((e,i)=>React.createElement('div',{key:e.id,className:"row-item",style:{display:"flex",justifyContent:"space-between",alignItems:"center",borderLeftColor:e.isLoan?"var(--cyan)":"var(--line)",borderLeftWidth:"3px",borderLeftStyle:"solid"}},
           React.createElement('div',null,
-            React.createElement('div',{style:{fontSize:11,color:e.isLoan?"#2d6bc4":"#1a2a4a"}},e.name),
-            React.createElement('div',{style:{fontSize:8,color:"#7a9ac0"}},e.growthRate>0?`+${e.growthRate}% a.a.`:"sem crescimento")
+            React.createElement('div',{className:"disp",style:{fontSize:10,color:e.isLoan?"var(--cyan)":"var(--text)",letterSpacing:1}},e.name),
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},e.growthRate>0?`+${e.growthRate}%/a`:"FLAT")
           ),
           React.createElement('div',{style:{textAlign:"right"}},
-            React.createElement('div',{style:{fontSize:11,fontWeight:700,color:"#2d6bc4"}},R$(calcExpense(e,108))),
-            React.createElement('div',{style:{fontSize:8,color:"#7a9ac0"}},"hoje: ",R$(e.val))
+            React.createElement('div',{className:"mono",style:{fontSize:11,fontWeight:700,color:"var(--neon)"}},R$(calcExpense(e,108))),
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},"now: ",R$(e.val))
           )
         ))
       )
     ),
 
-    /* ═══ RESUMO ═══ */
+    /* ══════════════ RESUMO ══════════════ */
     tab==="resumo"&&React.createElement(React.Fragment,null,
-      React.createElement(C,{cls:"card-red",style:{marginBottom:10}},
-        React.createElement(Lb,{light:true},"🔴 Fase 1 — Quitação de Dívidas"),
+      React.createElement('div',{className:"panel panel-red"},
+        React.createElement(Lb,{accent:"var(--red)"},"[FASE.01] QUITAÇÃO.DIVIDAS"),
         React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
           React.createElement('div',null,
-            React.createElement('div',{style:{fontSize:9,color:"#fca0a0"}},"DÍVIDA TOTAL ATUAL"),
-            React.createElement('div',{style:{fontSize:22,fontWeight:800,color:"#fff"}},R$(origDebt))
+            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#ff9b9b",letterSpacing:2}},"DIVIDA.TOTAL"),
+            React.createElement('div',{className:"mono",style:{fontSize:24,fontWeight:800,color:"#fff"}},R$(origDebt))
           ),
           React.createElement('div',{style:{textAlign:"right"}},
-            React.createElement('div',{style:{fontSize:9,color:"#fca0a0"}},"LIVRE EM"),
-            React.createElement('div',{style:{fontSize:22,fontWeight:800,color:"#7df0c0"}},debtFreeLabel),
-            React.createElement('div',{style:{fontSize:9,color:"#fca0a0"}},debtMonths.length," meses")
+            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#ff9b9b",letterSpacing:2}},"LIVRE.EM"),
+            React.createElement('div',{className:"disp",style:{fontSize:20,fontWeight:900,color:"var(--neon)"}},debtFreeLabel),
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"#ff9b9b"}},debtMonths.length,"m")
           )
         )
       ),
-      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}},
-        [{l:"Pool Inicial",v:"R$ 14.440,24",c:"#2d6bc4"},{l:"Juros Totais",v:R$(totalIntPaid),c:"#f39c12"},{l:"Parcelas (Mai/26)",v:R$(M1.totalPmt),c:"#d63031"},{l:"P/ Viver",v:R$(livingMin),c:"#1a2a4a"}].map((x,i)=>React.createElement(KV,{key:i,label:x.l,value:x.v,color:x.c}))
+      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}},
+        [{l:"POOL.INICIAL",v:"R$ 14.440,24",c:"var(--cyan)"},
+         {l:"JUROS.TOTAIS",v:R$(totalIntPaid),c:"var(--amber)"},
+         {l:"PARC.MAI/26",v:R$(M1.totalPmt),c:"var(--red)"},
+         {l:"P/VIVER",v:R$(livingMin),c:"var(--text)"}].map((x,i)=>React.createElement(KV,{key:i,label:x.l,value:x.v,color:x.c}))
       ),
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Empréstimos — Ordem de Quitação"),
-        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,style:{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
-          React.createElement('div',{style:{width:24,height:24,borderRadius:12,background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",color:"#fff",fontSize:9,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}},i+1),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"EMPRESTIMOS.ORDER[QUIT]"),
+        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,className:"row-item",style:{display:"flex",alignItems:"center",gap:10}},
+          React.createElement('div',{className:"disp",style:{width:28,height:28,background:"var(--neon)",color:"var(--bg)",fontSize:11,fontWeight:900,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,clipPath:"polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)"}},i+1),
           React.createElement('div',{style:{flex:1,minWidth:0}},
-            React.createElement('div',{style:{fontSize:11,fontWeight:600,color:l.color}},l.name," ",React.createElement('span',{style:{color:"#7a9ac0",fontSize:9}},"(",l.owner,")")),
-            React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},l.rate,"% a.m. · Saldo: ",R$(l.bal))
+            React.createElement('div',{className:"disp",style:{fontSize:10,fontWeight:700,color:l.color,letterSpacing:1}},l.name," ",React.createElement('span',{style:{color:"var(--text-faint)",fontSize:8}},"[",l.owner,"]")),
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},l.rate,"%/m · ",R$(l.bal))
           ),
           React.createElement('div',{style:{textAlign:"right",flexShrink:0}},
-            React.createElement('div',{style:{fontSize:11,fontWeight:800,color:"#00b894"}},l.paidOffLabel),
-            React.createElement('div',{style:{fontSize:8,color:"#f39c12"}},"Juros: ",R$(l.totalInterest))
+            React.createElement('div',{className:"mono",style:{fontSize:11,fontWeight:800,color:"var(--neon)"}},l.paidOffLabel),
+            React.createElement('div',{className:"mono",style:{fontSize:8,color:"var(--amber)"}},"J: ",R$(l.totalInterest))
           )
         ))
       ),
-      React.createElement('div',{className:'sep'}),
-      React.createElement(C,{cls:"card-teal",style:{marginBottom:10}},
-        React.createElement(Lb,{light:true},"🟢 Fase 2 — Construção de Patrimônio"),
+      React.createElement('div',{className:"divider-tech"},
+        React.createElement('div',{className:"dot"}),
+        React.createElement('div',{className:"line"}),
+        React.createElement('div',{className:"txt"},"FASE.02.BEGIN"),
+        React.createElement('div',{className:"line"}),
+        React.createElement('div',{className:"dot"})
+      ),
+      React.createElement('div',{className:"panel panel-cyan"},
+        React.createElement(Lb,{accent:"var(--cyan)"},"[FASE.02] CONSTR.PATRIMÔNIO"),
         React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
           React.createElement('div',null,
-            React.createElement('div',{style:{fontSize:9,color:"#a0f0d0"}},"PATRIMÔNIO EM 2034 (40 ANOS)"),
-            React.createElement('div',{style:{fontSize:20,fontWeight:800,color:"#fff"}},inv2034?R$(inv2034.portfolio):"—")
+            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#7fdfd0",letterSpacing:2}},"PATRIM.2034"),
+            React.createElement('div',{className:"mono",style:{fontSize:22,fontWeight:800,color:"#fff"}},inv2034?R$(inv2034.portfolio):"—")
           ),
           React.createElement('div',{style:{textAlign:"right"}},
-            React.createElement('div',{style:{fontSize:9,color:"#a0f0d0"}},"RENDIMENTO FII/MÊS"),
-            React.createElement('div',{style:{fontSize:16,fontWeight:800,color:"#7dd3fa"}},inv2034?R$(inv2034.yield_):"—")
+            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#7fdfd0",letterSpacing:2}},"REND.FII/m"),
+            React.createElement('div',{className:"mono",style:{fontSize:18,fontWeight:800,color:"var(--neon)"}},inv2034?R$(inv2034.yield_):"—")
           )
         )
       ),
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Evolução até 2034"),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"EVOL.2028→2034"),
         [2028,2029,2030,2031,2032,2033,2034].map(y=>{
           const dec=investMonths.filter(m=>m.y===y).pop();
           if(!dec)return null;
-          return React.createElement('div',{key:y,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb",gap:4}},
-            React.createElement('span',{style:{fontSize:11,fontWeight:700}}),
-            React.createElement('span',{style:{fontSize:11,color:"#00b894",fontWeight:700}},y,": ",R$(dec.portfolio)),
-            React.createElement('span',{style:{fontSize:10,color:"#6c5ce7"}},"Rend: ",R$(dec.yield_)),
-            React.createElement('span',{style:{fontSize:10,color:"#2d6bc4",fontWeight:700}},R$(dec.spendPower))
+          return React.createElement('div',{key:y,style:{display:"grid",gridTemplateColumns:"40px 1fr 1fr 1fr",gap:8,padding:"8px 0",borderBottom:"1px solid var(--line)",alignItems:"center"}},
+            React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:"var(--neon)"}},y),
+            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--text)",fontWeight:700,textAlign:"right"}},R$(dec.portfolio)),
+            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--cyan)",textAlign:"right"}},R$(dec.yield_)),
+            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--amber)",fontWeight:700,textAlign:"right"}},R$(dec.spendPower))
           );
         })
       )
     ),
 
-    /* ═══ ORÇAMENTO ═══ */
+    /* ══════════════ ORÇAMENTO ══════════════ */
     tab==="orcamento"&&React.createElement(React.Fragment,null,
-      React.createElement(C,{style:{borderLeft:"4px solid #00b894"}},
-        React.createElement(Lb,null,"Entradas Mensais (Mai/2026)"),
-        [{n:"Sal. Raquel (líq. de "+R$(raquelBruto)+")",v:netS(raquelBruto),c:"#00b894"},{n:"VA Raquel",v:vaRaquel,c:"#27ae60"},{n:"Sal. Erwin (líq. de "+R$(erwinBruto)+")",v:netS(erwinBruto),c:"#2d6bc4"},{n:"VA Erwin",v:vaErwin,c:"#0984e3"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #e8f0fb"}},React.createElement('span',{style:{fontSize:11,color:"#5a7ab0"}},e.n),React.createElement('span',{style:{fontSize:12,fontWeight:700,color:e.c}},R$(e.v)))),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"8px 0 0"}},React.createElement('span',{style:{fontSize:12,fontWeight:800}},"TOTAL"),React.createElement('span',{style:{fontSize:14,fontWeight:800,color:"#00b894"}},R$(incomeNow)))
-      ),
-      React.createElement(C,{style:{borderLeft:"4px solid #f39c12"}},
-        React.createElement(Lb,null,"Gastos Fixos Mensais (Mai/2026)"),
-        fixedExps.map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #e8f0fb"}},
-          React.createElement('span',{style:{fontSize:11,color:e.isLoan?"#2d6bc4":"#5a7ab0"}},e.name,e.isLoan?" (Pool)":"",e.growthRate>0?React.createElement('span',{style:{fontSize:8,color:"#b0c8e8",marginLeft:4}},"+",e.growthRate,"% a.a."):""),
-          React.createElement('span',{style:{fontSize:12,fontWeight:700,color:e.isLoan?"#2d6bc4":"#f39c12"}},R$(e.val))
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"ENTRADAS.MAI/26"),
+        [{n:"SAL.RAQUEL.NET",sub:"bruto: "+R$(raquelBruto),v:netS(raquelBruto),c:"var(--neon)"},
+         {n:"VA.RAQUEL",v:vaRaquel,c:"var(--neon-dim)"},
+         {n:"SAL.ERWIN.NET",sub:"bruto: "+R$(erwinBruto),v:netS(erwinBruto),c:"var(--cyan)"},
+         {n:"VA.ERWIN",v:vaErwin,c:"var(--cyan)"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid var(--line)"}},
+          React.createElement('div',null,
+            React.createElement('div',{className:"disp",style:{fontSize:10,color:"var(--text)",letterSpacing:1}},e.n),
+            e.sub&&React.createElement('div',{className:"mono",style:{fontSize:8,color:"var(--text-faint)"}},e.sub)
+          ),
+          React.createElement('span',{className:"mono",style:{fontSize:12,fontWeight:700,color:e.c}},R$(e.v))
         )),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"6px 0 0"}},React.createElement('span',{style:{fontSize:12,fontWeight:800}},"TOTAL"),React.createElement('span',{style:{fontSize:14,fontWeight:800,color:"#f39c12"}},R$(fixedExps.reduce((s,e)=>s+e.val,0))))
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"10px 0 0",marginTop:6,borderTop:"2px solid var(--neon)"}},
+          React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:800,letterSpacing:2,color:"var(--neon)"}},"> TOTAL"),
+          React.createElement('span',{className:"mono",style:{fontSize:16,fontWeight:800,color:"var(--neon)"}},R$(incomeNow))
+        )
       ),
-      React.createElement(C,{cls:"card-blue"},
-        React.createElement(Lb,{light:true},"Fluxo Mensal — Mai/2026"),
-        [{n:"+ Renda líquida",v:incomeNow,c:"#7df0c0"},{n:"- Gastos fixos",v:fixedNow,c:"#ffd080"},{n:"- P/ viver",v:livingMin,c:"#fff"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"4px 0"}},React.createElement('span',{style:{fontSize:11,color:e.c}},e.n),React.createElement('span',{style:{fontSize:12,fontWeight:700,color:e.c}},R$(e.v)))),
-        React.createElement('div',{style:{height:2,background:"rgba(255,255,255,.3)",margin:"8px 0"}}),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},React.createElement('span',{style:{fontSize:13,fontWeight:800,color:"#fff"}},"= SOBRA → POOL"),React.createElement('span',{style:{fontSize:18,fontWeight:800,color:"#7dd3fa"}},R$(surplusNow)))
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,{accent:"var(--amber)"},"GASTOS.FIXOS.MAI/26"),
+        fixedExps.map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid var(--line)"}},
+          React.createElement('div',null,
+            React.createElement('span',{className:"disp",style:{fontSize:10,color:e.isLoan?"var(--cyan)":"var(--text)",letterSpacing:1}},e.name,e.isLoan?" [POOL]":""),
+            e.growthRate>0&&React.createElement('span',{className:"mono",style:{fontSize:8,color:"var(--text-faint)",marginLeft:6}},"+",e.growthRate,"%/a")
+          ),
+          React.createElement('span',{className:"mono",style:{fontSize:12,fontWeight:700,color:e.isLoan?"var(--cyan)":"var(--amber)"}},R$(e.val))
+        )),
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"10px 0 0",marginTop:6,borderTop:"2px solid var(--amber)"}},
+          React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:800,letterSpacing:2,color:"var(--amber)"}},"> TOTAL"),
+          React.createElement('span',{className:"mono",style:{fontSize:16,fontWeight:800,color:"var(--amber)"}},R$(fixedExps.reduce((s,e)=>s+e.val,0)))
+        )
       ),
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Receitas Extras → Pool"),
-        [{n:"13° Raquel",v:netS(raquelBruto),p:"Dezembro"},{n:"13° Erwin",v:netS(erwinBruto),p:"Dezembro"},{n:`PPR Raquel ~${pprMultiplier}x`,v:netPPR(raquelBruto*pprMultiplier),p:"Abril (2027+)"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},React.createElement('div',null,React.createElement('div',{style:{fontSize:11,fontWeight:600}},e.n),React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},e.p)),React.createElement('span',{style:{fontSize:12,fontWeight:700,color:"#6c5ce7"}},R$(e.v))))
+      React.createElement('div',{className:"panel panel-neon"},
+        React.createElement(Lb,null,"FLUXO.MENSAL"),
+        [{n:"+ RENDA.LIQUIDA",v:incomeNow,c:"var(--neon)"},
+         {n:"- GASTOS.FIXOS",v:fixedNow,c:"var(--amber)"},
+         {n:"- P/VIVER",v:livingMin,c:"var(--text)"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"5px 0"}},
+          React.createElement('span',{className:"mono",style:{fontSize:11,color:e.c}},e.n),
+          React.createElement('span',{className:"mono",style:{fontSize:13,fontWeight:700,color:e.c}},R$(e.v))
+        )),
+        React.createElement('div',{style:{height:2,background:"var(--neon)",margin:"10px 0",boxShadow:"0 0 8px var(--neon)"}}),
+        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"baseline"}},
+          React.createElement('span',{className:"disp",style:{fontSize:12,fontWeight:800,letterSpacing:2,color:"var(--text)"}},"= SOBRA>POOL"),
+          React.createElement('span',{className:"mono",style:{fontSize:22,fontWeight:800,color:"var(--neon)"}},R$(surplusNow))
+        )
+      ),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"RECEITAS.EXTRAS>POOL"),
+        [{n:"13°.RAQUEL",v:netS(raquelBruto),p:"DEZ"},
+         {n:"13°.ERWIN",v:netS(erwinBruto),p:"DEZ"},
+         {n:`PPR.RAQUEL ~${pprMultiplier}x`,v:netPPR(raquelBruto*pprMultiplier),p:"ABR [2027+]"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid var(--line)"}},
+          React.createElement('div',null,
+            React.createElement('div',{className:"disp",style:{fontSize:10,fontWeight:600,letterSpacing:1}},e.n),
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},e.p)
+          ),
+          React.createElement('span',{className:"mono",style:{fontSize:13,fontWeight:700,color:"var(--cyan)"}},R$(e.v))
+        ))
       )
     ),
 
-    /* ═══ PROJEÇÃO ═══ */
+    /* ══════════════ PROJEÇÃO ══════════════ */
     tab==="projecao"&&React.createElement(React.Fragment,null,
-      React.createElement(C,{style:{padding:8}},React.createElement('div',{style:{display:"flex",gap:4,flexWrap:"wrap"}},
-        yrs.map(y=>React.createElement('button',{key:y,onClick:()=>setYr(y),style:{padding:"5px 10px",borderRadius:14,border:yr===y?"none":"1px solid #d0e0f5",fontSize:10,fontWeight:700,background:yr===y?"linear-gradient(135deg,#1a3a6c,#2d6bc4)":"#fff",color:yr===y?"#fff":"#2d6bc4"}},y))
-      )),
+      React.createElement('div',{className:"panel",style:{padding:12}},
+        React.createElement('div',{style:{display:"flex",gap:5,flexWrap:"wrap"}},
+          yrs.map(y=>React.createElement('button',{key:y,onClick:()=>setYr(y),className:"tech-btn"+(yr===y?" active":""),style:{padding:"6px 10px",fontSize:10}},y))
+        )
+      ),
       sim.months.filter(r=>r.y===yr).map(row=>{
         const isE=exp===row.k;const dp=origDebt>0?Math.max(0,row.totalDebt/origDebt*100):0;
-        const isInv=row.phase==="invest";const hasEv=row.lumpSum>0||row.amortDet.length>0;
-        return React.createElement('div',{key:row.k,onClick:()=>setExp(isE?null:row.k),style:{background:isInv?"#f0fff8":"#fff",borderRadius:12,padding:10,marginBottom:6,cursor:"pointer",border:"1px solid "+(isInv?"#00b89440":hasEv?"#6c5ce440":"#d0e0f5"),boxShadow:"0 1px 4px #2d6bc415"}},
+        const isInv=row.phase==="invest";
+        return React.createElement('div',{key:row.k,onClick:()=>setExp(isE?null:row.k),className:"row-item"+(isE?" active":""),style:{cursor:"pointer",borderLeftColor:isInv?"var(--neon)":"var(--red)",borderLeftWidth:"3px",borderLeftStyle:"solid",background:isInv?"#0e1809":"var(--bg2)"}},
           React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
             React.createElement('div',null,
-              React.createElement('span',{style:{fontSize:12,fontWeight:700,color:"#1a2a4a"}},row.label),
-              React.createElement('span',{style:{fontSize:8,marginLeft:6,padding:"2px 7px",borderRadius:10,background:isInv?"#00b89420":"#d6303120",color:isInv?"#00b894":"#d63031",fontWeight:700}},isInv?"INVESTINDO":"DÍVIDA"),
-              row.lumpLbl&&React.createElement('div',{style:{fontSize:8,color:"#6c5ce7",marginTop:2,fontWeight:700}},"★ ",row.lumpLbl)
+              React.createElement('span',{className:"disp",style:{fontSize:12,fontWeight:700,color:"var(--text)",letterSpacing:1}},row.label),
+              React.createElement('span',{className:"badge "+(isInv?"badge-neon":"badge-red"),style:{marginLeft:8}},isInv?"INVEST":"DIVIDA"),
+              row.lumpLbl&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",marginTop:3,fontWeight:700}},"★ ",row.lumpLbl)
             ),
             React.createElement('div',{style:{textAlign:"right"}},
               isInv?React.createElement(React.Fragment,null,
-                React.createElement('div',{style:{fontSize:13,fontWeight:800,color:"#00b894"}},R$(row.portfolio)),
-                React.createElement('div',{style:{fontSize:8,color:"#6c5ce7"}},"Rend: ",R$(row.yield_),"/mês")
+                React.createElement('div',{className:"mono",style:{fontSize:13,fontWeight:800,color:"var(--neon)"}},R$(row.portfolio)),
+                React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)"}},"r: ",R$(row.yield_))
               ):React.createElement(React.Fragment,null,
-                React.createElement('div',{style:{fontSize:13,fontWeight:800,color:row.active>0?"#d63031":"#00b894"}},row.active>0?R$(row.totalDebt):"✓ LIVRE!"),
-                React.createElement('div',{style:{fontSize:8,color:"#2d6bc4",fontWeight:700}},"Pool: ",R$(row.pool))
+                React.createElement('div',{className:"mono",style:{fontSize:13,fontWeight:800,color:row.active>0?"var(--red)":"var(--neon)"}},row.active>0?R$(row.totalDebt):"✓ LIVRE!"),
+                React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",fontWeight:700}},"pool: ",R$(row.pool))
               )
             )
           ),
-          !isInv&&React.createElement('div',{style:{height:4,background:"#e8f0fb",borderRadius:2,margin:"6px 0",overflow:"hidden"}},React.createElement('div',{style:{height:"100%",width:dp+"%",background:"linear-gradient(90deg,#00b894,#f39c12,#d63031)",borderRadius:2}})),
-          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",fontSize:9,color:"#7a9ac0",flexWrap:"wrap",gap:2}},
+          !isInv&&React.createElement('div',{className:"progress",style:{margin:"8px 0",height:4}},
+            React.createElement('div',{className:"progress-fill",style:{width:dp+"%"}})
+          ),
+          React.createElement('div',{className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:9,color:"var(--text-faint)",flexWrap:"wrap",gap:4}},
             isInv?React.createElement(React.Fragment,null,
-              React.createElement('span',{style:{color:"#00b894"}},"Viver: ",R$(row.halfLiving)),
-              React.createElement('span',{style:{color:"#6c5ce7"}},"FII: ",R$(row.halfInvest)),
-              React.createElement('span',{style:{color:"#2d6bc4",fontWeight:700}},"Poder: ",R$(row.spendPower))
+              React.createElement('span',{style:{color:"var(--neon)"}},"viver: ",R$(row.halfLiving)),
+              React.createElement('span',{style:{color:"var(--cyan)"}},"fii: ",R$(row.halfInvest)),
+              React.createElement('span',{style:{color:"var(--amber)",fontWeight:700}},"poder: ",R$(row.spendPower))
             ):React.createElement(React.Fragment,null,
-              React.createElement('span',null,"Parc: ",R$(row.totalPmt)),
-              React.createElement('span',{style:{color:"#2d6bc4"}},"+Pool: ",R$(row.surp)),
-              React.createElement('span',null,"Viver: ",R$(row.liv)),
-              row.lumpAmort>0&&React.createElement('span',{style:{color:"#6c5ce7",fontWeight:700}},"Amort: ",R$(row.lumpAmort))
+              React.createElement('span',null,"parc: ",R$(row.totalPmt)),
+              React.createElement('span',{style:{color:"var(--cyan)"}},"+pool: ",R$(row.surp)),
+              React.createElement('span',null,"viver: ",R$(row.liv)),
+              row.lumpAmort>0&&React.createElement('span',{style:{color:"var(--neon)",fontWeight:700}},"amort: ",R$(row.lumpAmort))
             )
           ),
-          isE&&React.createElement('div',{style:{marginTop:8,paddingTop:8,borderTop:"1px solid #d0e0f5",fontSize:10}},
-            React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:8}},
-              React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Renda líq."),React.createElement('br'),React.createElement('strong',{style:{color:"#00b894"}},R$(row.income))),
-              React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Gastos fixos"),React.createElement('br'),React.createElement('strong',{style:{color:"#f39c12"}},R$(row.fixedNoLoan))),
+          isE&&React.createElement('div',{style:{marginTop:10,paddingTop:10,borderTop:"1px dashed var(--line)",fontSize:10}},
+            React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}},
+              React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"RENDA.LIQ"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--neon)"}},R$(row.income))),
+              React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"GASTOS"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--amber)"}},R$(row.fixedNoLoan))),
               isInv?React.createElement(React.Fragment,null,
-                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Sobra total"),React.createElement('br'),React.createElement('strong',null,R$(row.income-row.fixedNoLoan))),
-                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Rend. FII"),React.createElement('br'),React.createElement('strong',{style:{color:"#6c5ce7"}},R$(row.yield_))),
-                React.createElement('div',{style:{gridColumn:"1/-1",background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",borderRadius:8,padding:8,textAlign:"center"}},
-                  React.createElement('div',{style:{fontSize:9,color:"#a0c0f0"}},"PODER DE COMPRA MENSAL"),
-                  React.createElement('div',{style:{fontSize:18,fontWeight:800,color:"#fff",marginTop:2}},R$(row.spendPower)),
-                  React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"Plano: ",R$(row.halfLiving)," viver + ",R$(row.halfInvest)," FII")
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"SOBRA"),React.createElement('br'),React.createElement('strong',{className:"mono"},R$(row.income-row.fixedNoLoan))),
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"REND.FII"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.yield_))),
+                React.createElement('div',{style:{gridColumn:"1/-1",background:"linear-gradient(135deg,#1a2008,#2d3a0a)",border:"1px solid var(--neon)",padding:10,textAlign:"center",clipPath:"polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)"}},
+                  React.createElement('div',{className:"disp",style:{fontSize:9,color:"var(--neon-dim)",letterSpacing:2}},"PODER.COMPRA/m"),
+                  React.createElement('div',{className:"mono",style:{fontSize:20,fontWeight:800,color:"var(--neon)",margin:"4px 0"}},R$(row.spendPower)),
+                  React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-dim)"}},R$(row.halfLiving)," viver + ",R$(row.halfInvest)," FII")
                 ),
-                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Patrimônio"),React.createElement('br'),React.createElement('strong',{style:{color:"#2d6bc4"}},R$(row.portfolio))),
-                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"Aporte"),React.createElement('br'),React.createElement('strong',{style:{color:"#6c5ce7"}},R$(row.contribution)))
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"PATRIM"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.portfolio))),
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"APORTE"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--neon)"}},R$(row.contribution)))
               ):React.createElement(React.Fragment,null,
-                React.createElement('div',null,React.createElement('span',{style:{color:"#7a9ac0"}},"P/ viver"),React.createElement('br'),React.createElement('strong',null,R$(row.liv))),
-                React.createElement('div',null,React.createElement('span',{style:{color:"#2d6bc4"}},"Sobra → Pool"),React.createElement('br'),React.createElement('strong',{style:{color:"#2d6bc4"}},R$(row.surp))),
-                React.createElement('div',null,React.createElement('span',{style:{color:"#d63031"}},"Parcelas"),React.createElement('br'),React.createElement('strong',{style:{color:"#d63031"}},R$(row.totalPmt))),
-                React.createElement('div',null,React.createElement('span',{style:{color:"#2d6bc4"}},"Pool final"),React.createElement('br'),React.createElement('strong',{style:{color:"#2d6bc4"}},R$(row.pool)))
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"P/VIVER"),React.createElement('br'),React.createElement('strong',{className:"mono"},R$(row.liv))),
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--cyan)",letterSpacing:1}},"SOBRA>POOL"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.surp))),
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--red)",letterSpacing:1}},"PARC"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--red)"}},R$(row.totalPmt))),
+                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--cyan)",letterSpacing:1}},"POOL.FINAL"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.pool)))
               )
             ),
-            row.lumpSum>0&&React.createElement('div',{style:{background:"#ede9fe",borderRadius:6,padding:6,marginBottom:6,border:"1px solid #c4b5fd"}},
-              React.createElement('div',{style:{color:"#6c5ce7",fontWeight:700}},"★ ",R$(row.lumpSum)," → ",isInv?"FIIs":"Pool"),
-              !isInv&&row.lumpAmort>0&&React.createElement('div',{style:{color:"#2d6bc4",fontSize:9}},"Excesso → Amort: ",R$(row.lumpAmort))
+            row.lumpSum>0&&React.createElement('div',{style:{background:"#1a2008",padding:8,marginBottom:8,border:"1px solid var(--neon-dim)"}},
+              React.createElement('div',{className:"mono",style:{color:"var(--neon)",fontWeight:700}},"★ ",R$(row.lumpSum)," → ",isInv?"FIIs":"Pool"),
+              !isInv&&row.lumpAmort>0&&React.createElement('div',{className:"mono",style:{color:"var(--cyan)",fontSize:9}},"excesso>amort: ",R$(row.lumpAmort))
             ),
-            row.amortDet.length>0&&React.createElement('div',{style:{marginBottom:6}},
-              React.createElement('div',{style:{fontWeight:700,color:"#2d6bc4",marginBottom:3}},"Amortizações:"),
-              row.amortDet.map((a,i)=>React.createElement('div',{key:i,style:{color:a.color}},"→ ",a.name,": ",R$(a.amount),sim.milestones.find(ml=>ml.id===a.id)?.paidOffMonth===row.k?" ✓ QUITADO!":""))
+            row.amortDet.length>0&&React.createElement('div',{style:{marginBottom:8}},
+              React.createElement('div',{className:"disp",style:{fontSize:9,fontWeight:700,color:"var(--cyan)",marginBottom:4,letterSpacing:1.5}},"AMORTIZAÇÕES:"),
+              row.amortDet.map((a,i)=>React.createElement('div',{key:i,className:"mono",style:{color:a.color,fontSize:10}},"→ ",a.name,": ",R$(a.amount),sim.milestones.find(ml=>ml.id===a.id)?.paidOffMonth===row.k?" ✓ QUIT!":""))
             ),
             !isInv&&row.loanDet.filter(l=>l.bal>0.5).length>0&&React.createElement('div',null,
-              React.createElement('div',{style:{fontWeight:700,color:"#7a9ac0",marginBottom:3}},"Saldos:"),
-              row.loanDet.filter(l=>l.bal>0.5).map((l,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between"}},React.createElement('span',{style:{color:l.color}},l.name),React.createElement('span',{style:{color:"#5a7ab0"}},R$(l.bal))))
+              React.createElement('div',{className:"disp",style:{fontSize:9,fontWeight:700,color:"var(--text-dim)",marginBottom:4,letterSpacing:1.5}},"SALDOS:"),
+              row.loanDet.filter(l=>l.bal>0.5).map((l,i)=>React.createElement('div',{key:i,className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:10}},
+                React.createElement('span',{style:{color:l.color}},l.name),
+                React.createElement('span',{style:{color:"var(--text-dim)"}},R$(l.bal))
+              ))
             )
           )
         );
       })
     ),
 
-    /* ═══ MARCOS ═══ */
+    /* ══════════════ MARCOS ══════════════ */
     tab==="marcos"&&React.createElement(React.Fragment,null,
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Quitação das Dívidas"),
-        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,style:{display:"flex",gap:8,marginBottom:10}},
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"QUITAÇÃO.TIMELINE"),
+        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,style:{display:"flex",gap:10,marginBottom:14}},
           React.createElement('div',{style:{display:"flex",flexDirection:"column",alignItems:"center",flexShrink:0}},
-            React.createElement('div',{style:{width:26,height:26,borderRadius:13,display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(135deg,#1a3a6c,#2d6bc4)",color:"#fff",fontSize:10,fontWeight:800}},i+1),
-            i<sim.milestones.length-1&&React.createElement('div',{style:{width:2,flex:1,minHeight:12,background:"#d0e0f5"}})
+            React.createElement('div',{className:"disp",style:{width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",background:"var(--neon)",color:"var(--bg)",fontSize:11,fontWeight:900,clipPath:"polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)"}},i+1),
+            i<sim.milestones.length-1&&React.createElement('div',{style:{width:2,flex:1,minHeight:14,background:"var(--neon-dim)",marginTop:2}})
           ),
-          React.createElement('div',{style:{flex:1}},
-            React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},React.createElement('span',{style:{fontSize:11,fontWeight:700,color:l.color}},l.name),React.createElement('span',{style:{fontSize:11,fontWeight:800,color:"#00b894"}},l.paidOffLabel)),
-            React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},l.owner," · ",l.rate,"% · ",R$(l.bal)),
-            React.createElement('div',{style:{fontSize:9,color:"#f39c12"}},"Juros: ",R$(l.totalInterest))
+          React.createElement('div',{style:{flex:1,paddingTop:2}},
+            React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+              React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:l.color,letterSpacing:1}},l.name),
+              React.createElement('span',{className:"mono",style:{fontSize:11,fontWeight:800,color:"var(--neon)"}},l.paidOffLabel)
+            ),
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginTop:2}},l.owner," · ",l.rate,"% · ",R$(l.bal)),
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--amber)"}},"juros: ",R$(l.totalInterest))
           )
         ))
       ),
-      React.createElement(C,{style:{borderLeft:"4px solid #00b894"}},
-        React.createElement(Lb,null,"Marcos da Jornada"),
+      React.createElement('div',{className:"panel panel-neon"},
+        React.createElement(Lb,null,"JORNADA.MILESTONES"),
         (()=>{
           const evts=[];
           sim.months.forEach(m=>{if(m.phase==="debt"&&m.amortDet.length>0)evts.push(m);});
           const dfm=sim.months.find(m=>m.phase==="invest");if(dfm)evts.push({...dfm,evt:"FREE"});
           if(inv2034)evts.push({...inv2034,evt:"40"});
           if(inv2060)evts.push({...inv2060,evt:"60"});
-          return evts.slice(0,20).map((m,i)=>React.createElement('div',{key:i,style:{padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
-            React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},
-              React.createElement('span',{style:{fontSize:11,fontWeight:700}},m.label),
-              m.evt==="FREE"&&React.createElement('span',{style:{fontSize:10,color:"#00b894",fontWeight:800}},"🎉 LIVRE!"),
-              m.evt==="40"&&React.createElement('span',{style:{fontSize:10,color:"#2d6bc4",fontWeight:800}},"🎯 40 ANOS"),
-              m.evt==="60"&&React.createElement('span',{style:{fontSize:10,color:"#6c5ce7",fontWeight:800}},"🏖️ APOSENTADORIA"),
-              !m.evt&&React.createElement('span',{style:{fontSize:9,color:"#7a9ac0"}},m.active," empr.")
+          return evts.slice(0,20).map((m,i)=>React.createElement('div',{key:i,style:{padding:"8px 0",borderBottom:"1px solid var(--line)"}},
+            React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+              React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,letterSpacing:1,color:"var(--text)"}},m.label),
+              m.evt==="FREE"&&React.createElement('span',{className:"badge badge-neon"},"🎉 LIVRE!"),
+              m.evt==="40"&&React.createElement('span',{className:"badge badge-cyan"},"🎯 40.ANOS"),
+              m.evt==="60"&&React.createElement('span',{className:"badge badge-neon"},"🏖️ APOSENT"),
+              !m.evt&&React.createElement('span',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},m.active," empr")
             ),
-            m.lumpAmort>0&&React.createElement('div',{style:{fontSize:9,color:"#2d6bc4"}},"Amortizou ",R$(m.lumpAmort)),
-            m.evt==="FREE"&&React.createElement('div',{style:{fontSize:9,color:"#00b894"}},"Pool → investimento inicial: ",R$(m.portfolio)),
-            (m.evt==="40"||m.evt==="60")&&React.createElement('div',{style:{fontSize:9,color:"#6c5ce7"}},"Patrim: ",R$(m.portfolio)," · Rend: ",R$(m.yield_),"/mês · Poder: ",R$(m.spendPower),"/mês")
+            m.lumpAmort>0&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",marginTop:2}},"amortizou ",R$(m.lumpAmort)),
+            m.evt==="FREE"&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--neon)",marginTop:2}},"pool→invest: ",R$(m.portfolio)),
+            (m.evt==="40"||m.evt==="60")&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",marginTop:2}},"patrim: ",R$(m.portfolio)," · rend: ",R$(m.yield_),"/m · poder: ",R$(m.spendPower),"/m")
           ));
         })()
       )
     ),
 
-    /* ═══ PATRIMÔNIO ═══ */
+    /* ══════════════ PATRIMÔNIO ══════════════ */
     tab==="patrimonio"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}},
-        React.createElement(C,{cls:"card-blue"},
-          React.createElement('div',{style:{fontSize:8,color:"#a0c0f0"}},"2034 — 40 ANOS"),
-          React.createElement('div',{style:{fontSize:16,fontWeight:800,color:"#fff",margin:"4px 0"}},inv2034?R$(inv2034.portfolio):"—"),
-          React.createElement('div',{style:{fontSize:9,color:"#7dd3fa"}},"Rend: ",inv2034?R$(inv2034.yield_):"—","/mês")
+      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}},
+        React.createElement('div',{className:"panel panel-cyan",style:{margin:0,padding:14}},
+          React.createElement('div',{className:"disp",style:{fontSize:8,color:"#7fdfd0",letterSpacing:2}},"2034 // 40.ANOS"),
+          React.createElement('div',{className:"mono",style:{fontSize:18,fontWeight:800,color:"#fff",margin:"6px 0"}},inv2034?R$(inv2034.portfolio):"—"),
+          React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--neon)"}},"rend: ",inv2034?R$(inv2034.yield_):"—","/m")
         ),
-        React.createElement(C,{cls:"card-teal"},
-          React.createElement('div',{style:{fontSize:8,color:"#a0f0d0"}},"2060 — APOSENTADORIA"),
-          React.createElement('div',{style:{fontSize:16,fontWeight:800,color:"#fff",margin:"4px 0"}},inv2060?R$(inv2060.portfolio):"—"),
-          React.createElement('div',{style:{fontSize:9,color:"#7dd3fa"}},"Rend: ",inv2060?R$(inv2060.yield_):"—","/mês")
+        React.createElement('div',{className:"panel panel-neon",style:{margin:0,padding:14}},
+          React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:2}},"2060 // APOSENT"),
+          React.createElement('div',{className:"mono",style:{fontSize:18,fontWeight:800,color:"#fff",margin:"6px 0"}},inv2060?R$(inv2060.portfolio):"—"),
+          React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)"}},"rend: ",inv2060?R$(inv2060.yield_):"—","/m")
         )
       ),
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Poder de Compra Mensal por Ano"),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,null,"PODER.COMPRA.ANUAL"),
         investMonths.filter((_,i)=>i%12===11||i===investMonths.length-1).map((m,i)=>
-          React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid #e8f0fb",alignItems:"center",gap:4}},
-            React.createElement('span',{style:{fontSize:11,fontWeight:700,flexShrink:0}},m.y),
-            React.createElement('span',{style:{fontSize:11,color:"#00b894",fontWeight:700}},R$(m.portfolio)),
-            React.createElement('span',{style:{fontSize:10,color:"#6c5ce7"}},"Rend: ",R$(m.yield_)),
-            React.createElement('span',{style:{fontSize:10,color:"#2d6bc4",fontWeight:700}},R$(m.spendPower))
+          React.createElement('div',{key:i,style:{display:"grid",gridTemplateColumns:"40px 1fr 1fr 1fr",gap:8,padding:"8px 0",borderBottom:"1px solid var(--line)",alignItems:"center"}},
+            React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:"var(--neon)"}},m.y),
+            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--text)",fontWeight:700,textAlign:"right"}},R$(m.portfolio)),
+            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--cyan)",textAlign:"right"}},R$(m.yield_)),
+            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--amber)",fontWeight:700,textAlign:"right"}},R$(m.spendPower))
           )
         )
       )
     ),
 
-    /* ═══ ANÁLISE ═══ */
+    /* ══════════════ ANÁLISE ══════════════ */
     tab==="analise"&&React.createElement(React.Fragment,null,
-      React.createElement(C,{cls:"card-blue",style:{marginBottom:10}},
-        React.createElement(Lb,{light:true},"Parecer Final"),
-        React.createElement('div',{style:{fontSize:11,color:"#c8dcf8",lineHeight:1.9}},
-          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#fca0a0"}},"Dívidas:")," ",R$(origDebt)," quitados em ",debtMonths.length," meses (",debtFreeLabel,"). Juros totais: ",R$(totalIntPaid),"."),
-          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#ffd080"}},"Gastos fixos:")," Atuais ",R$(fixedExps.reduce((s,e)=>s+e.val,0)),"/mês. Em 2034: ",R$(calcTotalFixedAtMonth(fixedExps,108)),"/mês."),
-          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#7dd3fa"}},"Pool único:")," Sobra mensal + PPR + 13° entram. Parcelas saem."),
-          React.createElement('p',{style:{margin:"0 0 10px"}},React.createElement('strong',{style:{color:"#7df0c0"}},"Aos 40 (2034):")," Patrimônio de ",inv2034?R$(inv2034.portfolio):"—"," gerando ",inv2034?R$(inv2034.yield_):"—","/mês. Poder de compra: ",inv2034?R$(inv2034.spendPower):"—","/mês."),
-          React.createElement('p',{style:{margin:0}},React.createElement('strong',{style:{color:"#c4b5fd"}},"Aposentadoria (2060):")," Patrimônio de ",inv2060?R$(inv2060.portfolio):"—"," gerando ",inv2060?R$(inv2060.yield_):"—","/mês.")
+      React.createElement('div',{className:"panel panel-neon"},
+        React.createElement(Lb,null,"PARECER.FINAL"),
+        React.createElement('div',{style:{fontSize:12,color:"var(--text-dim)",lineHeight:1.8,fontFamily:"'Rajdhani',sans-serif"}},
+          React.createElement('p',{style:{margin:"0 0 10px"}},
+            React.createElement('strong',{className:"disp",style:{color:"var(--red)",fontSize:10,letterSpacing:1.5}},"DIVIDAS // "),
+            R$(origDebt)," quitados em ",debtMonths.length," meses (",debtFreeLabel,"). Juros totais: ",R$(totalIntPaid),"."
+          ),
+          React.createElement('p',{style:{margin:"0 0 10px"}},
+            React.createElement('strong',{className:"disp",style:{color:"var(--amber)",fontSize:10,letterSpacing:1.5}},"GASTOS // "),
+            "Atuais ",R$(fixedExps.reduce((s,e)=>s+e.val,0)),"/m. Em 2034: ",R$(calcTotalFixedAtMonth(fixedExps,108)),"/m."
+          ),
+          React.createElement('p',{style:{margin:"0 0 10px"}},
+            React.createElement('strong',{className:"disp",style:{color:"var(--cyan)",fontSize:10,letterSpacing:1.5}},"POOL // "),
+            "Sobra mensal + PPR + 13° entram. Parcelas saem."
+          ),
+          React.createElement('p',{style:{margin:"0 0 10px"}},
+            React.createElement('strong',{className:"disp",style:{color:"var(--neon)",fontSize:10,letterSpacing:1.5}},"40.ANOS // "),
+            "Patrimônio ",inv2034?R$(inv2034.portfolio):"—"," gerando ",inv2034?R$(inv2034.yield_):"—","/m. Poder: ",inv2034?R$(inv2034.spendPower):"—","/m."
+          ),
+          React.createElement('p',{style:{margin:0}},
+            React.createElement('strong',{className:"disp",style:{color:"var(--neon)",fontSize:10,letterSpacing:1.5}},"APOSENT // "),
+            "Patrim ",inv2060?R$(inv2060.portfolio):"—"," gerando ",inv2060?R$(inv2060.yield_):"—","/m."
+          )
         )
       ),
-      React.createElement(C,null,
-        React.createElement(Lb,null,"Ranking de Custo"),
+      React.createElement('div',{className:"panel"},
+        React.createElement(Lb,{accent:"var(--red)"},"RANKING.CUSTO"),
         LOANS_DEF.filter(l=>l.rate>0.5).sort((a,b)=>b.rate-a.rate).map((l,i)=>{
           const ms=sim.milestones.find(m=>m.id===l.id);
-          return React.createElement('div',{key:l.id,style:{padding:"6px 0",borderBottom:"1px solid #e8f0fb"}},
-            React.createElement('div',{style:{display:"flex",justifyContent:"space-between"}},
-              React.createElement('span',{style:{fontSize:11,fontWeight:700,color:l.color}},"#",i+1," ",l.name),
-              React.createElement('span',{style:{fontSize:11,fontWeight:700,color:"#d63031"}},l.rate,"%")
+          return React.createElement('div',{key:l.id,className:"row-item",style:{borderLeftColor:l.color,borderLeftWidth:"3px",borderLeftStyle:"solid"}},
+            React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+              React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:l.color,letterSpacing:1}},"#",i+1," ",l.name),
+              React.createElement('span',{className:"mono",style:{fontSize:12,fontWeight:700,color:"var(--red)"}},l.rate,"%")
             ),
-            React.createElement('div',{style:{fontSize:9,color:"#7a9ac0"}},"Juros: ",R$(ms?.totalInterest||0)," · Quita: ",ms?.paidOffLabel)
+            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginTop:3}},"juros: ",R$(ms?.totalInterest||0)," · quit: ",ms?.paidOffLabel)
           );
         })
       )
     ),
 
-    React.createElement('div',{style:{textAlign:"center",padding:"12px 0",color:"#7a9ac0",fontSize:8}},
-      "Pool único · FII: ",fiiRate,"% a.m. · INSS/IRRF estimados · Simulação dinâmica: Mai/2026 → Dez/2060"
+    /* ══════════════ FOOTER ══════════════ */
+    React.createElement('div',{style:{textAlign:"center",padding:"20px 0 10px",borderTop:"1px dashed var(--line)",marginTop:20}},
+      React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",letterSpacing:2}},
+        "// POOL.SYS · FII: ",fiiRate,"%/m · INSS+IRRF // SIM: MAI.26 → DEZ.60"
+      ),
+      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:3,marginTop:6}},
+        "> KLEIN.FINANCE.SYSTEM.ACTIVE"
+      )
     )
   );
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
 </script>
+
 </body>
 </html>
