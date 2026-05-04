@@ -1,1021 +1,1748 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>// KLEIN_FINANCE.SYS</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#0a0d0a;
-  --bg2:#12171a;
-  --panel:#1a1f22;
-  --panel2:#22282c;
-  --line:#2a3138;
-  --neon:#c5f82a;
-  --neon2:#9be005;
-  --neon-dim:#6b8c0e;
-  --text:#e8eae8;
-  --text-dim:#8a928c;
-  --text-faint:#5a625c;
-  --red:#ff3b3b;
-  --amber:#ffb020;
-  --cyan:#2af8e8;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KLEIN FINANCE // MAI.2026</title>
 
-/* Grid/circuit background */
-body::before{
-content:””;position:fixed;inset:0;pointer-events:none;z-index:0;
-background-image:
-linear-gradient(rgba(197,248,42,.025) 1px,transparent 1px),
-linear-gradient(90deg,rgba(197,248,42,.025) 1px,transparent 1px);
-background-size:32px 32px;
-}
-body::after{
-content:””;position:fixed;inset:0;pointer-events:none;z-index:0;
-background:radial-gradient(ellipse at 20% 0%,rgba(197,248,42,.08),transparent 50%),
-radial-gradient(ellipse at 80% 100%,rgba(42,248,232,.04),transparent 50%);
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
-#root{position:relative;z-index:1;padding:10px;max-width:760px;margin:0 auto}
-
-button{cursor:pointer;font-family:inherit;transition:all .15s ease}
-
-/* Scroll */
-::-webkit-scrollbar{height:4px;width:4px}
-::-webkit-scrollbar-track{background:var(–panel)}
-::-webkit-scrollbar-thumb{background:var(–neon);border-radius:0}
-
-/* Inputs — tech style */
-input[type=number]{
-background:var(–bg2);
-border:1px solid var(–line);
-border-left:3px solid var(–neon);
-color:var(–text);
-padding:10px 12px;
-font-size:15px;
-font-weight:600;
-width:100%;
-font-family:‘JetBrains Mono’,monospace;
-transition:all .2s;
--moz-appearance:textfield;
-clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
-}
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
-input[type=number]:focus{
-outline:none;
-border-color:var(–neon);
-border-left-color:var(–neon);
-background:#181e18;
-box-shadow:0 0 0 1px var(–neon),0 0 20px rgba(197,248,42,.2);
-}
-
-.inp-label{
-font-family:‘Orbitron’,sans-serif;
-font-size:9px;
-color:var(–neon);
-text-transform:uppercase;
-letter-spacing:2px;
-font-weight:700;
-margin-bottom:6px;
-display:flex;align-items:center;gap:6px;
-}
-.inp-label::before{
-content:””;width:6px;height:6px;background:var(–neon);
-clip-path:polygon(0 0,100% 0,50% 100%);
-}
-.inp-hint{
-font-family:‘JetBrains Mono’,monospace;
-font-size:9px;color:var(–text-faint);margin-top:4px;
-padding-left:8px;border-left:1px solid var(–line);
-}
-.inp-group{margin-bottom:14px}
-.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:420px){.inp-row{grid-template-columns:1fr}}
-
-/* Live dot */
-.live-dot{
-width:8px;height:8px;background:var(–neon);display:inline-block;
-box-shadow:0 0 10px var(–neon);
-animation:pulse 1.2s infinite;
-clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
-}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
-
-@keyframes glitch-in{
-0%{opacity:0;transform:translateY(6px) skewX(-2deg);clip-path:inset(0 100% 0 0)}
-50%{clip-path:inset(0 0 0 0)}
-100%{opacity:1;transform:translateY(0) skewX(0);clip-path:inset(0 0 0 0)}
-}
-.fade-up{animation:glitch-in .4s ease-out}
-
-/* Panels — chanfered / tech frames */
-.panel{
-background:var(–panel);
-border:1px solid var(–line);
-padding:16px;
-margin-bottom:12px;
-position:relative;
-clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
-}
-.panel::before{
-content:””;position:absolute;top:8px;left:8px;width:10px;height:10px;
-border-top:1.5px solid var(–neon);border-left:1.5px solid var(–neon);
-}
-.panel::after{
-content:””;position:absolute;bottom:8px;right:8px;width:10px;height:10px;
-border-bottom:1.5px solid var(–neon);border-right:1.5px solid var(–neon);
-}
-.panel-neon{
-background:linear-gradient(135deg,#1a2008,#2d3a0a);
-border:1px solid var(–neon);
-color:var(–text);
-}
-.panel-red{
-background:linear-gradient(135deg,#2a0808,#3a0f0f);
-border:1px solid var(–red);
-}
-.panel-cyan{
-background:linear-gradient(135deg,#072020,#0a2d2d);
-border:1px solid var(–cyan);
-}
-
-/* Headers */
-.h-title{
-font-family:‘Orbitron’,sans-serif;
-font-weight:900;
-letter-spacing:1px;
-text-transform:uppercase;
-}
-
-/* Tech corner markers */
-.corner-marker{
-position:relative;padding-left:14px;
-}
-.corner-marker::before{
-content:””;position:absolute;left:0;top:50%;transform:translateY(-50%);
-width:8px;height:8px;background:var(–neon);
-clip-path:polygon(0 0,100% 50%,0 100%);
-}
-
-/* Hex/angled button */
-.tech-btn{
-padding:8px 14px;
-background:var(–panel);
-border:1px solid var(–line);
-color:var(–text-dim);
-font-family:‘Orbitron’,sans-serif;
-font-size:9px;
-font-weight:700;
-letter-spacing:1.5px;
-text-transform:uppercase;
-white-space:nowrap;
-clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
-position:relative;
-}
-.tech-btn:hover{color:var(–neon);border-color:var(–neon-dim)}
-.tech-btn.active{
-background:var(–neon);
-color:var(–bg);
-border-color:var(–neon);
-box-shadow:0 0 20px rgba(197,248,42,.4);
-}
-
-/* Chain decor */
-.chain-decor{
-position:absolute;
-right:-10px;top:-10px;
-width:50px;height:50px;
-opacity:.15;
-pointer-events:none;
-}
-
-/* Section label — like “ON/OFF” from poster */
-.onoff-label{
-display:inline-flex;align-items:center;gap:8px;
-padding:4px 10px;
-background:var(–bg2);
-border:1px solid var(–line);
-font-family:‘Orbitron’,sans-serif;
-font-size:9px;
-font-weight:700;
-letter-spacing:2px;
-color:var(–text-dim);
-clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
-}
-.onoff-label .dot{
-width:6px;height:6px;border-radius:50%;background:var(–neon);
-box-shadow:0 0 8px var(–neon);
-}
-
-.mono{font-family:‘JetBrains Mono’,monospace}
-.disp{font-family:‘Orbitron’,sans-serif;font-weight:900;letter-spacing:2px}
-
-/* Progress bar */
-.progress{
-height:6px;background:var(–bg2);border:1px solid var(–line);position:relative;overflow:hidden;
-}
-.progress-fill{
-height:100%;
-background:linear-gradient(90deg,var(–neon) 0%,var(–amber) 60%,var(–red) 100%);
-box-shadow:0 0 10px var(–neon);
-}
-
-.kv-card{
-padding:10px 12px;
-background:var(–bg2);
-border:1px solid var(–line);
-border-left:3px solid var(–neon);
-position:relative;
-}
-.kv-card::after{
-content:””;position:absolute;top:0;right:0;border-top:8px solid var(–line);border-left:8px solid transparent;
-}
-
-/* Tab scroll */
-.tab-scroll{
-display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding:4px 0 8px;
-scrollbar-width:thin;
-}
-
-/* Headline treatment */
-.hero-title{
-font-family:‘Orbitron’,sans-serif;
-font-weight:900;
-font-size:38px;
-line-height:.9;
-letter-spacing:2px;
-color:var(–text);
-text-transform:uppercase;
-position:relative;
-display:inline-block;
-}
-.hero-title .accent{color:var(–neon);text-shadow:0 0 20px rgba(197,248,42,.5)}
-.hero-sub{
-display:inline-block;
-background:var(–neon);
-color:var(–bg);
-padding:4px 12px;
-font-family:‘Orbitron’,sans-serif;
-font-size:10px;
-font-weight:700;
-letter-spacing:2px;
-text-transform:uppercase;
-margin-top:8px;
-clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
-}
-
-/* Frame with bracket corners */
-.frame-brackets{position:relative;padding:14px}
-.frame-brackets::before,.frame-brackets::after,
-.frame-brackets > .br-tl,.frame-brackets > .br-br{
-content:””;position:absolute;width:14px;height:14px;border:2px solid var(–neon);
-}
-.frame-brackets::before{top:0;left:0;border-right:none;border-bottom:none}
-.frame-brackets::after{bottom:0;right:0;border-left:none;border-top:none}
-.frame-brackets > .br-tr{position:absolute;top:0;right:0;width:14px;height:14px;border:2px solid var(–neon);border-left:none;border-bottom:none}
-.frame-brackets > .br-bl{position:absolute;bottom:0;left:0;width:14px;height:14px;border:2px solid var(–neon);border-right:none;border-top:none}
-
-.divider-tech{
-display:flex;align-items:center;gap:10px;margin:18px 0 12px;
-}
-.divider-tech .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(–line),transparent)}
-.divider-tech .txt{font-family:‘Orbitron’,sans-serif;font-size:9px;letter-spacing:3px;color:var(–text-dim);text-transform:uppercase}
-.divider-tech .dot{width:6px;height:6px;background:var(–neon);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
-
-/* Row items */
-.row-item{
-padding:10px 12px;
-background:var(–bg2);
-border:1px solid var(–line);
-margin-bottom:6px;
-position:relative;
-transition:all .2s;
-}
-.row-item:hover{border-color:var(–neon-dim);background:#1d2320}
-.row-item.active{border-color:var(–neon);box-shadow:inset 3px 0 0 var(–neon)}
-
-/* Badge */
-.badge{
-display:inline-block;padding:2px 8px;
-font-family:‘Orbitron’,sans-serif;font-size:8px;font-weight:700;letter-spacing:1.5px;
-text-transform:uppercase;
-clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);
-}
-.badge-neon{background:var(–neon);color:var(–bg)}
-.badge-red{background:var(–red);color:#fff}
-.badge-cyan{background:var(–cyan);color:var(–bg)}
-
-</style>
-</head>
-<body>
-<div id="root"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-
-<script type="text/babel">
-const{useState,useMemo,useRef,useEffect}=React;
-
-const MP=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
-const mk=(y,m)=>y*12+m;
-const fk=k=>[Math.floor(k/12),k%12];
-const fm=(y,m)=>`${MP[m]}/${String(y).slice(-2)}`;
-const R$=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-
-const S1=[1296.34,1279.43,1262.18,1245.72,1228.93,1212.36,1196.55,1180.42,1165.02,1149.32,1133.83,1120.01,1104.92,1090.50,1075.80,1061.77,1047.46,1033.34,1019.86,1006.11,992.99,979.60,966.40,954.21,941.35,929.07,916.55,904.59,892.40,880.37,868.88,857.17,845.99,834.59,823.34,813.31,802.34,791.88,781.20,771.01,760.62,750.37,740.58,730.60,721.07,711.35,701.76,693.21,683.87,674.94,665.85,657.16,648.30,639.57,631.22,622.71,614.59,606.31,598.13,590.85,582.88,575.28,567.53,560.12,552.57,545.12,538.01,530.76,523.84,516.78,509.81,503.38,496.60,490.12,483.51,477.20,470.77,464.43];
-const S2=[72.59,71.37,70.12,68.94,67.74,66.56,65.43,64.29,63.21,62.11,61.02,60.06,59.01,58.02,57.01,56.04,55.07,54.11,53.19,52.27,51.39,50.49,49.61,48.80,47.95,47.14,46.32,45.54,44.74,43.96,43.22,42.47,41.75,41.02,40.31,39.67,38.98,38.32,37.66,37.02,36.37,35.74,35.14,34.52,33.94,33.35,32.77,32.25,31.69,31.16,30.61,30.10,29.57,29.06,28.57,28.07,27.59,27.11,26.64,26.22,25.76,25.33,24.89,24.47,24.04,23.62,23.22,22.82,22.43,22.04,21.66,21.30,20.93,20.58,20.22,19.88,19.53,19.19];
-const S3=[63.53,62.48,61.41,60.39,59.35,58.33,57.37,56.38,55.45,54.50,53.56,52.73,51.83,50.97,50.09,49.26,48.42,47.59,46.80,46.00,45.23,44.46,43.70,42.99,42.26,41.56,40.84,40.17,39.48,38.80,38.16,37.50,36.88,36.25,35.63,35.07,34.47,33.90,33.32,32.77,32.20,31.65,31.13,30.59,30.09,29.57,29.06,28.61,28.12,27.66,27.18,26.73,26.27,25.82,25.39,24.96,24.54,24.12,23.71,23.34,22.94,22.56,22.17,21.81,21.43,21.06,20.72,20.36,20.02,19.68,19.34,19.03,18.70,18.39,18.08,17.78,17.47,17.17,16.89];
-const JP=[629.60,618.25,607.45,596.50,585.74,575.52,565.14,555.28,545.27,535.43,526.70,517.21,508.18,499.02,490.31,481.46,472.78,464.53,456.15,448.19,440.11,432.17,424.88,417.22,409.93,402.54,395.52,388.38,381.38,374.72,367.97,361.54,355.02,348.62,342.94,336.76,330.88,324.91,319.24,313.48,307.83,302.46,297.00,291.82,286.56,281.39];
-
-const LOANS_DEF=[
-  {id:"sant1",name:"SANT.CONSIG.01",owner:"ERWIN",inst:"Santander",rate:1.3219,bal:63288.88,startK:mk(2026,4),sched:S1,color:"#ff3b3b"},
-  {id:"sant2",name:"SANT.CONSIG.02",owner:"ERWIN",inst:"Santander",rate:1.7165,bal:3136.90,startK:mk(2026,4),sched:S2,color:"#ff6b6b"},
-  {id:"sant3",name:"SANT.CONSIG.03",owner:"ERWIN",inst:"Santander",rate:1.6876,bal:2786.22,startK:mk(2026,4),sched:S3,color:"#ff9b9b"},
-  {id:"jeep",name:"SANT.JEEP",owner:"ERWIN",inst:"Santander",rate:1.77,bal:19913.98,startK:mk(2026,4),sched:JP,color:"#e74c3c"},
-  {id:"bb1",name:"BB.CONSIG.EK1",owner:"ERWIN",inst:"BB",rate:2.68,bal:22277.66,startK:mk(2026,4),sched:Array(48).fill(852.61),color:"#ffb020"},
-  {id:"bb2",name:"BB.CONSIG.EK2",owner:"ERWIN",inst:"BB",rate:2.73,bal:4119.88,startK:mk(2026,4),sched:Array(48).fill(159.26),color:"#ff9500"},
-  {id:"bb3",name:"BB.CONSIG.EK3",owner:"ERWIN",inst:"BB",rate:3.27,bal:2060.40,startK:mk(2026,4),sched:Array(48).fill(90.47),color:"#ff7700"},
-  {id:"bbrk",name:"BB.CONSIG.RK",owner:"RAQUEL",inst:"BB",rate:3.22,bal:20950,startK:mk(2026,6),sched:Array(37).fill(977.39),color:"#c5f82a"},
-  {id:"barra",name:"BARRACRED.RK",owner:"RAQUEL",inst:"Barracred",rate:0.5,bal:11808.78,startK:mk(2026,4),sched:Array(16).fill(707.53),color:"#2af8e8"},
-];
-
-const FIXED_EXP_DEF=[
-  {id:"aluguel",name:"ALUGUEL + COND.",val:2160,growthRate:5,isLoan:false},
-  {id:"luz",name:"LUZ",val:320,growthRate:4,isLoan:false},
-  {id:"gas",name:"GÁS",val:30,growthRate:3,isLoan:false},
-  {id:"colegio",name:"COLÉGIO OBJETIVO",val:1934.50,growthRate:10,isLoan:false},
-  {id:"mercado",name:"MERCADO/COMIDA",val:1886,growthRate:5,isLoan:false},
-  {id:"cartoes",name:"CARTÕES",val:450,growthRate:3,isLoan:false},
-  {id:"jeep_parc",name:"PARCELA JEEP",val:643.80,growthRate:0,isLoan:true},
-  {id:"combustivel",name:"COMBUSTÍVEL",val:400,growthRate:4,isLoan:false},
-  {id:"vivo",name:"VIVO",val:270,growthRate:3,isLoan:false},
-  {id:"outros",name:"OUTROS",val:0,growthRate:3,isLoan:false},
-];
-
-function calcExpense(exp,mo){return exp.val*Math.pow(1+exp.growthRate/100,mo/12);}
-function calcTotalFixedAtMonth(exps,mo){return exps.reduce((s,e)=>s+calcExpense(e,mo),0);}
-function calcFixedNoLoanAtMonth(exps,mo){return exps.filter(e=>!e.isLoan).reduce((s,e)=>s+calcExpense(e,mo),0);}
-
-function calcINSS(g){let t=0,p=0;for(const[l,r]of[[1412,.075],[2666.68,.09],[4000.03,.12],[7786.02,.14]]){if(g<=p)break;t+=(Math.min(g,l)-p)*r;p=l;}return t;}
-function calcIRRF(g,i){const b=g-i;for(const[l,r,d]of[[2259.20,0,0],[2826.65,.075,169.44],[3751.05,.15,381.44],[4664.68,.225,662.77],[1e9,.275,896]]){if(b<=l)return Math.max(0,b*r-d);}return 0;}
-function netS(g){const i=calcINSS(g);return g-i-calcIRRF(g,i);}
-function netPPR(g){for(const[l,r,d]of[[7640.80,0,0],[9922.28,.075,573.06],[13167,.15,1316.28],[16380.38,.225,2303.55],[1e9,.275,3122.06]]){if(g<=l)return g-Math.max(0,g*r-d);}return g;}
-function gSal(base,target,i,months){return base+(target-base)*Math.min(i,months)/months;}
-
-function runSim(params){
-  const{raquelBruto,erwinBruto,vaRaquel,vaErwin,pprMultiplier,raquelTarget,erwinTarget,growthMonths,fiiRate,livingMin,fixedExps}=params;
-  const START=mk(2026,4);const END_K=mk(2060,11);
-  let pool=14440.24;
-  let loans=LOANS_DEF.map(l=>({...l,balance:l.bal,paidOff:false,paidOffMonth:null,totalPaid:0,totalInterest:0}));
-  const months=[];let debtFreeK=null,portfolio=0;
-  for(let i=0;;i++){
-    const k=START+i;if(k>END_K)break;
-    const[y,m]=fk(k);
-    const rG=gSal(raquelBruto,raquelTarget,i,growthMonths);
-    const eG=gSal(erwinBruto,erwinTarget,i,growthMonths);
-    const vaR_cur=gSal(vaRaquel,vaRaquel*(raquelTarget/Math.max(raquelBruto,1)),i,growthMonths);
-    const vaE_cur=gSal(vaErwin,vaErwin*(erwinTarget/Math.max(erwinBruto,1)),i,growthMonths);
-    const income=netS(rG)+netS(eG)+vaR_cur+vaE_cur;
-    const fixedNoLoan=calcFixedNoLoanAtMonth(fixedExps,i);
-    const totalDebtBefore=loans.reduce((s,l)=>s+l.balance,0);
-    const isDebtFree=totalDebtBefore<=0.5;
-    if(!isDebtFree){
-      const surp=Math.max(0,income-fixedNoLoan-livingMin);
-      const liv=Math.min(income-fixedNoLoan,livingMin);
-      pool+=surp;
-      let lumpSum=0,lumpLbl="";
-      if(m===11){const b=netS(rG)+netS(eG);lumpSum+=b;lumpLbl=`13° (${R$(b)})`;}
-      if(m===3&&y>=2027){const p=netPPR(rG*pprMultiplier);lumpSum+=p;lumpLbl+=(lumpLbl?" + ":"")+`PPR (${R$(p)})`;}
-      pool+=lumpSum;
-      let totalPmt=0;const loanDet=[];
-      for(const loan of loans){
-        if(loan.paidOff||loan.balance<=0.5){if(!loan.paidOff&&loan.balance<=0.5){loan.paidOff=true;loan.paidOffMonth=loan.paidOffMonth||k;loan.balance=0;}loanDet.push({id:loan.id,name:loan.name,pmt:0,bal:0,color:loan.color});continue;}
-        const si=k-loan.startK;if(si<0){loanDet.push({id:loan.id,name:loan.name,pmt:0,bal:loan.balance,color:loan.color});continue;}
-        const interest=loan.balance*loan.rate/100;let sp=si<loan.sched.length?loan.sched[si]:0;
-        if(sp<=0&&loan.balance>0.5)sp=Math.min(loan.balance+interest,loan.sched[0]||500);
-        sp=Math.min(sp,loan.balance+interest);const princ=Math.max(0,sp-interest);
-        loan.balance=Math.max(0,loan.balance-princ);loan.totalPaid+=sp;loan.totalInterest+=interest;
-        totalPmt+=sp;
-        if(loan.balance<=0.5){loan.paidOff=true;loan.paidOffMonth=k;loan.balance=0;}
-        loanDet.push({id:loan.id,name:loan.name,pmt:sp,bal:loan.balance,color:loan.color});
-      }
-      pool-=totalPmt;
-      let lumpAmort=0;const amortDet=[];
-      if(lumpSum>0){const mN=m===11?4:8;const est=totalPmt>0?totalPmt:3500;const exc=Math.max(0,pool-est*mN);let rem=exc;
-        for(const loan of loans.filter(l=>!l.paidOff&&l.balance>0.5).sort((a,b)=>b.rate-a.rate)){if(rem<=0)break;const ap=Math.min(rem,loan.balance);if(ap>0){loan.balance-=ap;rem-=ap;lumpAmort+=ap;pool-=ap;amortDet.push({id:loan.id,name:loan.name,amount:ap,color:loan.color});if(loan.balance<=0.5){loan.paidOff=true;loan.paidOffMonth=k;loan.balance=0;}}}}
-      const totalDebt=loans.reduce((s,l)=>s+l.balance,0);
-      if(totalDebt<=0.5&&!debtFreeK){debtFreeK=k;portfolio=pool;pool=0;}
-      months.push({k,y,m,label:fm(y,m),phase:"debt",income,rG,eG,fixedNoLoan,totalPmt,pool,liv,surp,lumpSum,lumpLbl,lumpAmort,loanDet,amortDet,totalDebt,active:loans.filter(l=>!l.paidOff).length,portfolio:0,yield_:0,contribution:0,halfLiving:0,halfInvest:0,spendPower:liv,vaR:vaR_cur,vaE:vaE_cur});
-    }else{
-      if(!debtFreeK){debtFreeK=k;portfolio=pool;pool=0;}
-      const surplus=income-fixedNoLoan;const hL=Math.max(livingMin,Math.floor(surplus/2));const hI=surplus-hL;
-      let lI=0,lLbl="";
-      if(m===11){const b=netS(rG)+netS(eG);lI+=b;lLbl=`13° (${R$(b)})`;}
-      if(m===3&&y>=2027){const p=netPPR(rG*pprMultiplier);lI+=p;lLbl+=(lLbl?" + ":"")+`PPR (${R$(p)})`;}
-      const yld=portfolio*fiiRate;portfolio+=yld+hI+lI;
-      months.push({k,y,m,label:fm(y,m),phase:"invest",income,rG,eG,fixedNoLoan,totalPmt:0,pool:0,liv:hL,surp:hI,lumpSum:lI,lumpLbl:lLbl,lumpAmort:0,loanDet:[],amortDet:[],totalDebt:0,active:0,portfolio,yield_:yld,contribution:hI+lI,halfLiving:hL,halfInvest:hI,spendPower:surplus+yld,vaR:vaR_cur,vaE:vaE_cur});
+  <style>
+    :root{
+      --bg:#dbe8e5;
+      --bg2:#eff7f5;
+      --panel:#004d4b;
+      --panel2:#006460;
+      --panel3:#003b3a;
+      --card:#f3fbf9;
+      --card2:#dbe9e7;
+      --text:#073f3d;
+      --text-dim:#416f6d;
+      --text-soft:#779796;
+      --white:#f8fffd;
+      --teal:#005755;
+      --cyan:#00bbb2;
+      --green:#3fbf9f;
+      --amber:#f1b65f;
+      --red:#e76464;
+      --line:rgba(0,77,75,.16);
+      --shadow:0 22px 36px rgba(0,50,50,.22), inset 0 1px 0 rgba(255,255,255,.08);
+      --soft-shadow:10px 16px 28px rgba(0,59,58,.18), -8px -8px 22px rgba(255,255,255,.65);
+      --radius:30px;
     }
-  }
-  const milestones=loans.map(l=>({...l,paidOffLabel:l.paidOffMonth?fm(...fk(l.paidOffMonth)):"—"})).sort((a,b)=>(a.paidOffMonth||9e9)-(b.paidOffMonth||9e9));
-  return{months,milestones,debtFreeK};
-}
 
-function Inp({label,value,onChange,hint,prefix,step,small}){
-  const[local,setLocal]=useState(String(value));
-  const timer=useRef(null);
-  useEffect(()=>{setLocal(String(value));},[value]);
-  const handle=e=>{
-    const v=e.target.value;setLocal(v);
-    clearTimeout(timer.current);
-    timer.current=setTimeout(()=>{const n=parseFloat(v);if(!isNaN(n))onChange(n);},2000);
-  };
-  return React.createElement('div',{className:'inp-group',style:small?{marginBottom:8}:{}},
-    label&&React.createElement('div',{className:'inp-label'},label),
-    React.createElement('div',{style:{position:'relative'}},
-      prefix&&React.createElement('span',{style:{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--neon)',fontSize:10,fontWeight:700,pointerEvents:'none',fontFamily:"'JetBrains Mono',monospace",zIndex:1}},prefix),
-      React.createElement('input',{type:'number',value:local,onChange:handle,style:{paddingLeft:prefix?36:14,paddingTop:small?7:10,paddingBottom:small?7:10,fontSize:small?13:15},step:step||'any'})
-    ),
-    hint&&React.createElement('div',{className:'inp-hint'},hint)
-  );
-}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;overflow-x:hidden}
+    body{
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255,255,255,.72), transparent 31%),
+        radial-gradient(circle at 90% 10%, rgba(0,91,88,.14), transparent 30%),
+        linear-gradient(135deg,var(--bg),#eef7f5 45%,#cadad8);
+      color:var(--text);
+      font-family:'Rajdhani',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      padding:28px 16px 36px;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        linear-gradient(rgba(0,77,75,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,77,75,.035) 1px,transparent 1px);
+      background-size:42px 42px;
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,.7),transparent 85%);
+      z-index:0;
+    }
 
-function ExpenseEditor({exps,onChange}){
-  const totalNow=exps.reduce((s,e)=>s+e.val,0);
-  const total2034=calcTotalFixedAtMonth(exps,108);
-  return React.createElement('div',null,
-    React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr auto 80px",gap:8,marginBottom:8,padding:"0 4px"}},
-      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon)",letterSpacing:1.5}},"> VAL.ATUAL"),
-      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon)",letterSpacing:1.5,textAlign:"center"}},"CRESC.%"),
-      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--cyan)",letterSpacing:1.5,textAlign:"right"}},"EM.2034")
-    ),
-    exps.map((exp,idx)=>{
-      const val2034=calcExpense(exp,108);
-      const upd=(field,val)=>{const cp=[...exps];cp[idx]={...cp[idx],[field]:val};onChange(cp);};
-      return React.createElement('div',{key:exp.id,style:{background:"var(--bg2)",padding:"10px 12px",marginBottom:6,border:"1px solid var(--line)",borderLeft:"3px solid "+(exp.isLoan?"var(--cyan)":"var(--neon-dim)")}},
-        React.createElement('div',{style:{fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:exp.isLoan?"var(--cyan)":"var(--text)",marginBottom:6,letterSpacing:1}},
-          exp.name,exp.isLoan&&React.createElement('span',{style:{fontSize:8,color:"var(--text-faint)",marginLeft:6}},"[POOL]")
-        ),
-        React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr 80px",gap:6,alignItems:"center"}},
-          React.createElement(Inp,{value:exp.val,onChange:v=>upd("val",v),prefix:"R$",small:true}),
-          React.createElement('div',{style:{display:"flex",alignItems:"center",gap:4}},
-            React.createElement(Inp,{value:exp.growthRate,onChange:v=>upd("growthRate",v),small:true,step:"0.1"}),
-            React.createElement('span',{style:{fontSize:10,color:"var(--text-faint)",flexShrink:0,fontFamily:"'JetBrains Mono',monospace"}},"%/a")
-          ),
-          React.createElement('div',{className:"mono",style:{textAlign:"right",fontSize:11,fontWeight:700,color:exp.growthRate>0?"var(--cyan)":"var(--text-faint)"}},R$(val2034))
-        )
+    #root{position:relative;z-index:1;max-width:1120px;margin:0 auto}
+    button,input{font-family:inherit}
+    button{cursor:pointer;border:0;transition:.2s ease}
+    ::selection{background:var(--teal);color:#fff}
+    ::-webkit-scrollbar{height:7px;width:7px}
+    ::-webkit-scrollbar-track{background:rgba(0,77,75,.08);border-radius:999px}
+    ::-webkit-scrollbar-thumb{background:var(--teal);border-radius:999px}
+
+    .mono{font-family:'JetBrains Mono',monospace}
+    .disp{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+    .muted{color:var(--text-soft)}
+
+    .app-shell{display:grid;gap:18px}
+
+    .topbar{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:18px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .nav-pill,.profile-pill{
+      background:var(--panel);
+      color:var(--white);
+      border-radius:999px;
+      box-shadow:var(--soft-shadow);
+      min-height:50px;
+    }
+    .nav-pill{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:0 26px;
+      overflow-x:auto;
+    }
+    .nav-pill span,.profile-pill span{white-space:nowrap}
+    .nav-pill .active{
+      color:#eafffb;
+      text-decoration:underline;
+      text-underline-offset:4px;
+      font-weight:900;
+    }
+    .profile-pill{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:0 22px;
+      min-width:190px;
+    }
+    .profile-icon{
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      background:var(--card);
+      color:var(--teal);
+      display:grid;
+      place-items:center;
+      font-weight:900;
+    }
+    .profile-text{line-height:.9;font-weight:800}
+    .profile-text small{
+      display:block;
+      color:#b9d5d1;
+      font-family:'JetBrains Mono';
+      font-size:9px;
+      margin-top:4px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:22px;
+      margin-bottom:18px;
+      align-items:stretch;
+    }
+    .hero{
+      position:relative;
+      overflow:hidden;
+      min-height:350px;
+      background:linear-gradient(145deg,var(--panel),var(--panel3));
+      border-radius:36px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      color:var(--white);
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:16px;
+      border:2px solid rgba(242,250,248,.58);
+      border-radius:22px;
+      pointer-events:none;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-70px;
+      top:-60px;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:rgba(142,230,214,.16);
+      filter:blur(3px);
+    }
+    .search-pill{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      justify-content:space-between;
+      background:rgba(0,0,0,.13);
+      border-radius:18px;
+      padding:13px 18px;
+      margin-bottom:22px;
+      color:#cce5e1;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+      position:relative;
+      z-index:2;
+    }
+    .hero-kicker{
+      position:relative;
+      z-index:1;
+      display:inline-block;
+      border:2px solid rgba(242,250,248,.55);
+      border-radius:14px;
+      padding:12px 28px;
+      color:#bfe0dc;
+      font-weight:800;
+      letter-spacing:.8px;
+      margin-bottom:28px;
+    }
+    .hero-title{
+      position:relative;
+      z-index:1;
+      font-family:'Orbitron',sans-serif;
+      font-weight:900;
+      line-height:.9;
+      font-size:clamp(44px,8vw,92px);
+      letter-spacing:5px;
+      color:#d8e9e5;
+      text-transform:uppercase;
+      text-shadow:0 14px 18px rgba(0,0,0,.2);
+    }
+    .hero-title .thin{
+      display:block;
+      font-family:'Rajdhani';
+      font-size:18px;
+      letter-spacing:4px;
+      color:#b8d4d0;
+      margin:4px 0 12px 9px;
+    }
+    .hero-actions{
+      position:absolute;
+      left:28px;
+      right:28px;
+      bottom:22px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+      z-index:2;
+    }
+    .ghost-cta,.solid-cta{
+      min-height:44px;
+      border-radius:8px;
+      background:var(--card2);
+      color:var(--teal);
+      font-family:'Orbitron';
+      font-weight:900;
+      letter-spacing:1px;
+      box-shadow:0 12px 18px rgba(0,0,0,.17);
+    }
+
+    .info-card{
+      background:var(--card);
+      border-radius:30px 30px 18px 30px;
+      padding:36px 32px;
+      box-shadow:var(--soft-shadow);
+      position:relative;
+      color:var(--text);
+      align-self:start;
+      min-height:250px;
+      margin-top:74px;
+    }
+    .info-card h2{
+      font-family:'Rajdhani';
+      font-size:33px;
+      line-height:1;
+      color:var(--teal);
+      margin-bottom:16px;
+      font-weight:900;
+    }
+    .info-card p{
+      font-size:18px;
+      line-height:1.14;
+      color:var(--text-dim);
+      font-weight:600;
+      max-width:390px;
+    }
+    .info-arrow{
+      position:absolute;
+      right:-4px;
+      bottom:-4px;
+      width:70px;
+      height:70px;
+      background:var(--teal);
+      border:3px solid var(--card);
+      border-radius:14px;
+      color:var(--white);
+      display:grid;
+      place-items:center;
+      font-size:34px;
+      font-weight:900;
+      box-shadow:var(--soft-shadow);
+    }
+    .get-started{
+      position:absolute;
+      right:22px;
+      top:-46px;
+      background:var(--teal);
+      color:var(--white);
+      border-radius:999px;
+      padding:17px 52px;
+      font-weight:900;
+      font-family:'Orbitron';
+      box-shadow:var(--soft-shadow);
+    }
+
+    .tab-scroll{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding:4px 0 10px;
+      margin-bottom:8px;
+    }
+    .tech-btn{
+      flex:0 0 auto;
+      padding:11px 20px;
+      border-radius:999px;
+      background:rgba(242,250,248,.72);
+      color:var(--teal);
+      box-shadow:7px 9px 18px rgba(0,70,70,.14), inset 0 0 0 2px rgba(0,77,75,.17);
+      font-family:'Orbitron';
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+    .tech-btn:hover{
+      transform:translateY(-1px);
+      background:#fff;
+    }
+    .tech-btn.active{
+      background:var(--teal);
+      color:#fff;
+      box-shadow:0 12px 24px rgba(0,77,75,.28);
+    }
+
+    .panel{
+      position:relative;
+      background:linear-gradient(145deg,var(--panel),#00605d);
+      color:var(--white);
+      border-radius:var(--radius);
+      padding:24px;
+      margin-bottom:18px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel::after{
+      content:"";
+      position:absolute;
+      right:18px;
+      top:18px;
+      width:130px;
+      height:54px;
+      border:3px solid rgba(242,250,248,.55);
+      border-radius:13px;
+      opacity:.45;
+      pointer-events:none;
+    }
+    .panel.panel-neon{background:linear-gradient(145deg,#005a58,#0f8079)}
+    .panel.panel-cyan{background:linear-gradient(145deg,#00605d,#0c8d83)}
+    .panel.panel-red{background:linear-gradient(145deg,#694747,#9f5656)}
+    .panel-light{
+      background:var(--card);
+      color:var(--text);
+      box-shadow:var(--soft-shadow);
+    }
+    .panel-light::after{
+      border-color:rgba(0,77,75,.26);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
+      position:relative;
+      z-index:1;
+    }
+    .section-title i{
+      width:42px;
+      height:42px;
+      border-radius:13px;
+      background:var(--card);
+      color:var(--teal);
+      display:grid;
+      place-items:center;
+      font-style:normal;
+      font-size:22px;
+      font-weight:900;
+      box-shadow:0 12px 18px rgba(0,0,0,.15);
+    }
+    .section-title span{
+      font-family:'Orbitron';
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:inherit;
+    }
+    .panel-light .section-title i{
+      background:var(--teal);
+      color:#fff;
+    }
+
+    .inp-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      position:relative;
+      z-index:1;
+    }
+    .inp-group{
+      margin-bottom:14px;
+      position:relative;
+      z-index:1;
+    }
+    .inp-label{
+      font-family:'Orbitron';
+      font-size:10px;
+      letter-spacing:1.8px;
+      text-transform:uppercase;
+      color:#dff7f2;
+      margin-bottom:8px;
+      font-weight:900;
+    }
+    .panel-light .inp-label{color:var(--teal)}
+    .input-wrap{position:relative}
+    .input-prefix{
+      position:absolute;
+      left:16px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--teal);
+      font-family:'JetBrains Mono';
+      font-size:12px;
+      font-weight:900;
+      z-index:1;
+    }
+    input[type=number]{
+      width:100%;
+      height:48px;
+      background:var(--card);
+      border:0;
+      border-radius:13px;
+      padding:0 16px;
+      color:var(--teal);
+      font-family:'JetBrains Mono';
+      font-size:16px;
+      font-weight:900;
+      box-shadow:inset 0 0 0 2px rgba(0,77,75,.14), 0 10px 18px rgba(0,0,0,.1);
+      -moz-appearance:textfield;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{
+      -webkit-appearance:none;
+    }
+    input[type=number]:focus{
+      outline:0;
+      box-shadow:inset 0 0 0 3px var(--teal),0 0 0 5px rgba(142,230,214,.28);
+    }
+    .inp-hint{
+      font-family:'JetBrains Mono';
+      font-size:10px;
+      color:#bfd9d5;
+      margin-top:6px;
+      line-height:1.3;
+    }
+    .panel-light .inp-hint{color:var(--text-soft)}
+
+    .stat-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .kv-card{
+      background:var(--card);
+      color:var(--text);
+      border-radius:18px;
+      padding:18px 16px;
+      box-shadow:var(--soft-shadow);
+      min-height:92px;
+      position:relative;
+      overflow:hidden;
+    }
+    .kv-card::before{
+      content:"";
+      position:absolute;
+      right:-24px;
+      bottom:-24px;
+      width:78px;
+      height:78px;
+      border-radius:50%;
+      background:rgba(0,77,75,.08);
+    }
+    .kv-label{
+      font-family:'Orbitron';
+      font-size:9px;
+      letter-spacing:1.4px;
+      text-transform:uppercase;
+      color:var(--text-soft);
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .kv-value{
+      font-family:'JetBrains Mono';
+      font-size:15px;
+      font-weight:900;
+      color:var(--teal);
+      line-height:1.15;
+      position:relative;
+      z-index:1;
+    }
+
+    .row-item{
+      background:var(--card);
+      color:var(--text);
+      border-radius:18px;
+      padding:14px 16px;
+      margin-bottom:10px;
+      box-shadow:0 10px 18px rgba(0,77,75,.13);
+      border:2px solid rgba(0,77,75,.08);
+    }
+    .row-item.active,.row-item:hover{
+      border-color:rgba(0,77,75,.45);
+      transform:translateY(-1px);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      padding:5px 10px;
+      font-family:'Orbitron';
+      font-size:9px;
+      font-weight:900;
+      letter-spacing:1px;
+      color:#fff;
+      background:var(--teal);
+      text-transform:uppercase;
+    }
+    .badge-neon{background:var(--green)}
+    .badge-red{background:var(--red)}
+    .badge-cyan{background:var(--cyan);color:#003f3e}
+
+    .progress{
+      height:10px;
+      background:rgba(0,77,75,.12);
+      border-radius:999px;
+      overflow:hidden;
+      box-shadow:inset 0 0 0 1px rgba(0,77,75,.1);
+    }
+    .progress-fill{
+      height:100%;
+      background:linear-gradient(90deg,#39bfa9,#8ee6d6,#f2c46e,#e76464);
+      border-radius:999px;
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+    .three-col{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+    .mini-table{
+      display:grid;
+      gap:10px;
+      position:relative;
+      z-index:1;
+    }
+    .line-row{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:center;
+      border-bottom:1px solid rgba(255,255,255,.18);
+      padding:9px 0;
+    }
+    .panel-light .line-row{
+      border-bottom:1px solid rgba(0,77,75,.12);
+    }
+    .line-row strong{
+      font-family:'JetBrains Mono';
+      font-size:13px;
+      color:inherit;
+    }
+    .line-row small{
+      display:block;
+      color:#bedbd7;
+      font-family:'JetBrains Mono';
+      font-size:10px;
+      margin-top:3px;
+    }
+    .panel-light .line-row small{color:var(--text-soft)}
+    .year-grid{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
+    }
+    .divider-pill{
+      height:1px;
+      background:linear-gradient(90deg,transparent,rgba(0,77,75,.3),transparent);
+      margin:10px 0 18px;
+    }
+    .warning{
+      color:#fff;
+      background:linear-gradient(145deg,#8c5757,#b76464);
+    }
+    .good{
+      color:#fff;
+      background:linear-gradient(145deg,#05736e,#1d9489);
+    }
+    .footer{
+      text-align:center;
+      padding:22px;
+      margin-top:20px;
+      background:var(--teal);
+      color:#dff7f2;
+      border-radius:999px;
+      box-shadow:var(--soft-shadow);
+      font-family:'Orbitron';
+      font-size:11px;
+      letter-spacing:3px;
+      text-transform:uppercase;
+      font-weight:900;
+    }
+
+    @media(max-width:900px){
+      .topbar{grid-template-columns:1fr}
+      .profile-pill{justify-content:center}
+      .hero-grid{grid-template-columns:1fr}
+      .info-card{margin-top:0}
+      .stat-grid{grid-template-columns:1fr 1fr}
+      .two-col,.three-col{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      body{padding:18px 10px}
+      .nav-pill{padding:0 16px;font-size:14px}
+      .hero{min-height:360px;padding:20px}
+      .hero-actions{grid-template-columns:1fr;gap:10px}
+      .info-card{padding:28px 24px}
+      .inp-row,.stat-grid{grid-template-columns:1fr}
+      .panel{padding:18px;border-radius:24px}
+      .panel::after{display:none}
+      .footer{border-radius:26px;line-height:1.5}
+      .hero-title{font-size:48px}
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+
+  <script type="text/babel">
+    const {useState,useMemo,useRef,useEffect}=React;
+
+    const MP=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+    const mk=(y,m)=>y*12+m;
+    const fk=k=>[Math.floor(k/12),k%12];
+    const fm=(y,m)=>`${MP[m]}/${String(y).slice(-2)}`;
+    const brl=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+    const S1=[1296.34,1279.43,1262.18,1245.72,1228.93,1212.36,1196.55,1180.42,1165.02,1149.32,1133.83,1120.01,1104.92,1090.50,1075.80,1061.77,1047.46,1033.34,1019.86,1006.11,992.99,979.60,966.40,954.21,941.35,929.07,916.55,904.59,892.40,880.37,868.88,857.17,845.99,834.59,823.34,813.31,802.34,791.88,781.20,771.01,760.62,750.37,740.58,730.60,721.07,711.35,701.76,693.21,683.87,674.94,665.85,657.16,648.30,639.57,631.22,622.71,614.59,606.31,598.13,590.85,582.88,575.28,567.53,560.12,552.57,545.12,538.01,530.76,523.84,516.78,509.81,503.38,496.60,490.12,483.51,477.20,470.77,464.43];
+    const S2=[72.59,71.37,70.12,68.94,67.74,66.56,65.43,64.29,63.21,62.11,61.02,60.06,59.01,58.02,57.01,56.04,55.07,54.11,53.19,52.27,51.39,50.49,49.61,48.80,47.95,47.14,46.32,45.54,44.74,43.96,43.22,42.47,41.75,41.02,40.31,39.67,38.98,38.32,37.66,37.02,36.37,35.74,35.14,34.52,33.94,33.35,32.77,32.25,31.69,31.16,30.61,30.10,29.57,29.06,28.57,28.07,27.59,27.11,26.64,26.22,25.76,25.33,24.89,24.47,24.04,23.62,23.22,22.82,22.43,22.04,21.66,21.30,20.93,20.58,20.22,19.88,19.53,19.19];
+    const S3=[63.53,62.48,61.41,60.39,59.35,58.33,57.37,56.38,55.45,54.50,53.56,52.73,51.83,50.97,50.09,49.26,48.42,47.59,46.80,46.00,45.23,44.46,43.70,42.99,42.26,41.56,40.84,40.17,39.48,38.80,38.16,37.50,36.88,36.25,35.63,35.07,34.47,33.90,33.32,32.77,32.20,31.65,31.13,30.59,30.09,29.57,29.06,28.61,28.12,27.66,27.18,26.73,26.27,25.82,25.39,24.96,24.54,24.12,23.71,23.34,22.94,22.56,22.17,21.81,21.43,21.06,20.72,20.36,20.02,19.68,19.34,19.03,18.70,18.39,18.08,17.78,17.47,17.17,16.89];
+    const JP=[629.60,618.25,607.45,596.50,585.74,575.52,565.14,555.28,545.27,535.43,526.70,517.21,508.18,499.02,490.31,481.46,472.78,464.53,456.15,448.19,440.11,432.17,424.88,417.22,409.93,402.54,395.52,388.38,381.38,374.72,367.97,361.54,355.02,348.62,342.94,336.76,330.88,324.91,319.24,313.48,307.83,302.46,297.00,291.82,286.56,281.39];
+
+    const LOANS_DEF=[
+      {id:"sant1",name:"SANT.CONSIG.01",owner:"ERWIN",inst:"Santander",rate:1.3219,bal:63288.88,startK:mk(2026,4),sched:S1,color:"#e76464"},
+      {id:"sant2",name:"SANT.CONSIG.02",owner:"ERWIN",inst:"Santander",rate:1.7165,bal:3136.90,startK:mk(2026,4),sched:S2,color:"#f08b8b"},
+      {id:"sant3",name:"SANT.CONSIG.03",owner:"ERWIN",inst:"Santander",rate:1.6876,bal:2786.22,startK:mk(2026,4),sched:S3,color:"#f6aaaa"},
+      {id:"jeep",name:"SANT.JEEP",owner:"ERWIN",inst:"Santander",rate:1.77,bal:19913.98,startK:mk(2026,4),sched:JP,color:"#d35e5e"},
+      {id:"bb1",name:"BB.CONSIG.EK1",owner:"ERWIN",inst:"BB",rate:2.68,bal:22277.66,startK:mk(2026,4),sched:Array(48).fill(852.61),color:"#f1b65f"},
+      {id:"bb2",name:"BB.CONSIG.EK2",owner:"ERWIN",inst:"BB",rate:2.73,bal:4119.88,startK:mk(2026,4),sched:Array(48).fill(159.26),color:"#e99b44"},
+      {id:"bb3",name:"BB.CONSIG.EK3",owner:"ERWIN",inst:"BB",rate:3.27,bal:2060.40,startK:mk(2026,4),sched:Array(48).fill(90.47),color:"#de8840"},
+      {id:"bbrk",name:"BB.CONSIG.RK",owner:"RAQUEL",inst:"BB",rate:3.22,bal:20950,startK:mk(2026,6),sched:Array(37).fill(977.39),color:"#5ec3a9"},
+      {id:"barra",name:"BARRACRED.RK",owner:"RAQUEL",inst:"Barracred",rate:0.5,bal:11808.78,startK:mk(2026,4),sched:Array(16).fill(707.53),color:"#00bbb2"}
+    ];
+
+    const FIXED_EXP_DEF=[
+      {id:"aluguel",name:"ALUGUEL + COND.",val:2160,growthRate:5,isLoan:false},
+      {id:"luz",name:"LUZ",val:320,growthRate:4,isLoan:false},
+      {id:"gas",name:"GÁS",val:30,growthRate:3,isLoan:false},
+      {id:"colegio",name:"COLÉGIO OBJETIVO",val:1934.50,growthRate:10,isLoan:false},
+      {id:"mercado",name:"MERCADO/COMIDA",val:1886,growthRate:5,isLoan:false},
+      {id:"cartoes",name:"CARTÕES",val:450,growthRate:3,isLoan:false},
+      {id:"jeep_parc",name:"PARCELA JEEP",val:643.80,growthRate:0,isLoan:true},
+      {id:"combustivel",name:"COMBUSTÍVEL",val:400,growthRate:4,isLoan:false},
+      {id:"vivo",name:"VIVO",val:270,growthRate:3,isLoan:false},
+      {id:"outros",name:"OUTROS",val:0,growthRate:3,isLoan:false}
+    ];
+
+    function calcExpense(exp,mo){
+      return exp.val*Math.pow(1+exp.growthRate/100,mo/12);
+    }
+
+    function calcTotalFixedAtMonth(exps,mo){
+      return exps.reduce((s,e)=>s+calcExpense(e,mo),0);
+    }
+
+    function calcFixedNoLoanAtMonth(exps,mo){
+      return exps.filter(e=>!e.isLoan).reduce((s,e)=>s+calcExpense(e,mo),0);
+    }
+
+    function calcINSS(g){
+      let t=0,p=0;
+      for(const[l,r]of[[1412,.075],[2666.68,.09],[4000.03,.12],[7786.02,.14]]){
+        if(g<=p)break;
+        t+=(Math.min(g,l)-p)*r;
+        p=l;
+      }
+      return t;
+    }
+
+    function calcIRRF(g,i){
+      const b=g-i;
+      for(const[l,r,d]of[[2259.20,0,0],[2826.65,.075,169.44],[3751.05,.15,381.44],[4664.68,.225,662.77],[1e9,.275,896]]){
+        if(b<=l)return Math.max(0,b*r-d);
+      }
+      return 0;
+    }
+
+    function netS(g){
+      const i=calcINSS(g);
+      return g-i-calcIRRF(g,i);
+    }
+
+    function netPPR(g){
+      for(const[l,r,d]of[[7640.80,0,0],[9922.28,.075,573.06],[13167,.15,1316.28],[16380.38,.225,2303.55],[1e9,.275,3122.06]]){
+        if(g<=l)return g-Math.max(0,g*r-d);
+      }
+      return g;
+    }
+
+    function gSal(base,target,i,months){
+      return base+(target-base)*Math.min(i,months)/months;
+    }
+
+    function runSim(params){
+      const {
+        raquelIncome,
+        erwinIncome,
+        foodIncome,
+        otherIncome,
+        pprNet,
+        raquelTarget,
+        erwinTarget,
+        foodTarget,
+        growthMonths,
+        fiiRate,
+        livingMin,
+        fixedExps,
+        initialPool
+      }=params;
+
+      const START=mk(2026,4);
+      const END_K=mk(2060,11);
+
+      let pool=initialPool;
+      let portfolio=0;
+      let debtFreeK=null;
+
+      let loans=LOANS_DEF.map(l=>({
+        ...l,
+        balance:l.bal,
+        paidOff:false,
+        paidOffMonth:null,
+        totalPaid:0,
+        totalInterest:0
+      }));
+
+      const months=[];
+
+      for(let i=0;;i++){
+        const k=START+i;
+        if(k>END_K)break;
+
+        const [y,m]=fk(k);
+
+        const rI=gSal(raquelIncome,raquelTarget,i,growthMonths);
+        const eI=gSal(erwinIncome,erwinTarget,i,growthMonths);
+        const fI=gSal(foodIncome,foodTarget,i,growthMonths);
+
+        const income=rI+eI+fI+otherIncome;
+        const fixedNoLoan=calcFixedNoLoanAtMonth(fixedExps,i);
+        const totalDebtBefore=loans.reduce((s,l)=>s+l.balance,0);
+        const isDebtFree=totalDebtBefore<=0.5;
+
+        if(!isDebtFree){
+          const surp=Math.max(0,income-fixedNoLoan-livingMin);
+          const liv=Math.min(Math.max(0,income-fixedNoLoan),livingMin);
+
+          pool+=surp;
+
+          let lumpSum=0;
+          let lumpLbl="";
+
+          if(m===11){
+            const b=rI+eI;
+            lumpSum+=b;
+            lumpLbl=`13° (${brl(b)})`;
+          }
+
+          if(m===3&&y>=2027){
+            const p=pprNet*Math.max(.4,rI/Math.max(raquelIncome,1));
+            lumpSum+=p;
+            lumpLbl+=(lumpLbl?" + ":"")+`PPR (${brl(p)})`;
+          }
+
+          pool+=lumpSum;
+
+          let totalPmt=0;
+          const loanDet=[];
+
+          for(const loan of loans){
+            if(loan.paidOff||loan.balance<=0.5){
+              if(!loan.paidOff&&loan.balance<=0.5){
+                loan.paidOff=true;
+                loan.paidOffMonth=loan.paidOffMonth||k;
+                loan.balance=0;
+              }
+
+              loanDet.push({
+                id:loan.id,
+                name:loan.name,
+                pmt:0,
+                bal:0,
+                color:loan.color
+              });
+              continue;
+            }
+
+            const si=k-loan.startK;
+
+            if(si<0){
+              loanDet.push({
+                id:loan.id,
+                name:loan.name,
+                pmt:0,
+                bal:loan.balance,
+                color:loan.color
+              });
+              continue;
+            }
+
+            const interest=loan.balance*loan.rate/100;
+            let sp=si<loan.sched.length?loan.sched[si]:0;
+
+            if(sp<=0&&loan.balance>0.5){
+              sp=Math.min(loan.balance+interest,loan.sched[0]||500);
+            }
+
+            sp=Math.min(sp,loan.balance+interest);
+
+            const princ=Math.max(0,sp-interest);
+
+            loan.balance=Math.max(0,loan.balance-princ);
+            loan.totalPaid+=sp;
+            loan.totalInterest+=interest;
+            totalPmt+=sp;
+
+            if(loan.balance<=0.5){
+              loan.paidOff=true;
+              loan.paidOffMonth=k;
+              loan.balance=0;
+            }
+
+            loanDet.push({
+              id:loan.id,
+              name:loan.name,
+              pmt:sp,
+              bal:loan.balance,
+              color:loan.color
+            });
+          }
+
+          pool-=totalPmt;
+
+          let lumpAmort=0;
+          const amortDet=[];
+
+          if(lumpSum>0){
+            const mN=m===11?4:8;
+            const est=totalPmt>0?totalPmt:3500;
+            const exc=Math.max(0,pool-est*mN);
+            let rem=exc;
+
+            for(const loan of loans.filter(l=>!l.paidOff&&l.balance>0.5).sort((a,b)=>b.rate-a.rate)){
+              if(rem<=0)break;
+
+              const ap=Math.min(rem,loan.balance);
+
+              if(ap>0){
+                loan.balance-=ap;
+                rem-=ap;
+                lumpAmort+=ap;
+                pool-=ap;
+
+                amortDet.push({
+                  id:loan.id,
+                  name:loan.name,
+                  amount:ap,
+                  color:loan.color
+                });
+
+                if(loan.balance<=0.5){
+                  loan.paidOff=true;
+                  loan.paidOffMonth=k;
+                  loan.balance=0;
+                }
+              }
+            }
+          }
+
+          const totalDebt=loans.reduce((s,l)=>s+l.balance,0);
+
+          if(totalDebt<=0.5&&!debtFreeK){
+            debtFreeK=k;
+            portfolio=Math.max(0,pool);
+            pool=0;
+          }
+
+          months.push({
+            k,y,m,
+            label:fm(y,m),
+            phase:"debt",
+            income,
+            rI,eI,fI,
+            fixedNoLoan,
+            totalPmt,
+            pool,
+            liv,
+            surp,
+            lumpSum,
+            lumpLbl,
+            lumpAmort,
+            loanDet,
+            amortDet,
+            totalDebt,
+            active:loans.filter(l=>!l.paidOff).length,
+            portfolio:0,
+            yield_:0,
+            contribution:0,
+            halfLiving:0,
+            halfInvest:0,
+            spendPower:liv,
+            critical:pool<0
+          });
+        }else{
+          if(!debtFreeK){
+            debtFreeK=k;
+            portfolio=Math.max(0,pool);
+            pool=0;
+          }
+
+          const surplus=income-fixedNoLoan;
+          const hL=Math.max(livingMin,Math.floor(surplus/2));
+          const hI=Math.max(0,surplus-hL);
+
+          let lI=0;
+          let lLbl="";
+
+          if(m===11){
+            const b=rI+eI;
+            lI+=b;
+            lLbl=`13° (${brl(b)})`;
+          }
+
+          if(m===3&&y>=2027){
+            const p=pprNet*Math.max(.4,rI/Math.max(raquelIncome,1));
+            lI+=p;
+            lLbl+=(lLbl?" + ":"")+`PPR (${brl(p)})`;
+          }
+
+          const yld=portfolio*fiiRate;
+          portfolio+=yld+hI+lI;
+
+          months.push({
+            k,y,m,
+            label:fm(y,m),
+            phase:"invest",
+            income,
+            rI,eI,fI,
+            fixedNoLoan,
+            totalPmt:0,
+            pool:0,
+            liv:hL,
+            surp:hI,
+            lumpSum:lI,
+            lumpLbl:lLbl,
+            lumpAmort:0,
+            loanDet:[],
+            amortDet:[],
+            totalDebt:0,
+            active:0,
+            portfolio,
+            yield_:yld,
+            contribution:hI+lI,
+            halfLiving:hL,
+            halfInvest:hI,
+            spendPower:surplus+yld,
+            critical:false
+          });
+        }
+      }
+
+      const milestones=loans.map(l=>({
+        ...l,
+        paidOffLabel:l.paidOffMonth?fm(...fk(l.paidOffMonth)):"—"
+      })).sort((a,b)=>(a.paidOffMonth||9e9)-(b.paidOffMonth||9e9));
+
+      return {months,milestones,debtFreeK};
+    }
+
+    function Inp({label,value,onChange,hint,prefix,step,small}){
+      const [local,setLocal]=useState(String(value));
+      const timer=useRef(null);
+
+      useEffect(()=>{
+        setLocal(String(value));
+      },[value]);
+
+      const handle=e=>{
+        const v=e.target.value;
+        setLocal(v);
+        clearTimeout(timer.current);
+        timer.current=setTimeout(()=>{
+          const n=parseFloat(v);
+          if(!isNaN(n))onChange(n);
+        },450);
+      };
+
+      return (
+        <div className="inp-group" style={small?{marginBottom:0}:null}>
+          {label&&<div className="inp-label">{label}</div>}
+          <div className="input-wrap">
+            {prefix&&<span className="input-prefix">{prefix}</span>}
+            <input
+              type="number"
+              value={local}
+              onChange={handle}
+              step={step||"any"}
+              style={{
+                paddingLeft:prefix?44:16,
+                height:small?40:48,
+                fontSize:small?13:16
+              }}
+            />
+          </div>
+          {hint&&<div className="inp-hint">{hint}</div>}
+        </div>
       );
-    }),
-    React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:"linear-gradient(135deg,#1a2008,#2d3a0a)",border:"1px solid var(--neon)",marginTop:8,clipPath:"polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)"}},
-      React.createElement('div',null,
-        React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:2}},"> TOTAL.NOW"),
-        React.createElement('div',{className:"mono",style:{fontSize:14,fontWeight:800,color:"var(--text)"}},R$(totalNow))
-      ),
-      React.createElement('div',{style:{textAlign:"right"}},
-        React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:2}},"TOTAL.2034 <"),
-        React.createElement('div',{className:"mono",style:{fontSize:14,fontWeight:800,color:"var(--neon)"}},R$(total2034))
-      )
-    )
-  );
-}
+    }
 
-function App(){
-  const[raquelBruto,setRaquelBruto]=useState(10500);
-  const[erwinBruto,setErwinBruto]=useState(4135);
-  const[vaRaquel,setVaRaquel]=useState(1116);
-  const[vaErwin,setVaErwin]=useState(730);
-  const[pprMultiplier,setPprMultiplier]=useState(4.5);
-  const[raquelTarget,setRaquelTarget]=useState(14000);
-  const[erwinTarget,setErwinTarget]=useState(6300);
-  const[fiiRate,setFiiRate]=useState(0.88);
-  const[livingMin,setLivingMin]=useState(4000);
-  const[fixedExps,setFixedExps]=useState(FIXED_EXP_DEF);
-  const[tab,setTab]=useState("inputs");
-  const[yr,setYr]=useState(2026);
-  const[exp,setExp]=useState(null);
+    function SectionTitle({children,icon="+"}){
+      return (
+        <div className="section-title">
+          <i>{icon}</i>
+          <span>{children}</span>
+        </div>
+      );
+    }
 
-  const growthMonths=60;
-  const params=useMemo(()=>({raquelBruto,erwinBruto,vaRaquel,vaErwin,pprMultiplier,raquelTarget,erwinTarget,growthMonths,fiiRate:fiiRate/100,livingMin,fixedExps}),[raquelBruto,erwinBruto,vaRaquel,vaErwin,pprMultiplier,raquelTarget,erwinTarget,fiiRate,livingMin,fixedExps]);
-  const sim=useMemo(()=>runSim(params),[params]);
+    function KV({label,value,color}){
+      return (
+        <div className="kv-card">
+          <div className="kv-label">{label}</div>
+          <div className="kv-value" style={color?{color}:null}>{value}</div>
+        </div>
+      );
+    }
 
-  const M1=sim.months[0]||{};
-  const debtFreeLabel=sim.debtFreeK?fm(...fk(sim.debtFreeK)):"—";
-  const yrs=[...new Set(sim.months.map(r=>r.y))];
-  const origDebt=LOANS_DEF.reduce((s,l)=>s+l.bal,0);
-  const investMonths=sim.months.filter(m=>m.phase==="invest");
-  const inv2034=investMonths.filter(m=>m.y<=2034).pop();
-  const inv2060=investMonths[investMonths.length-1];
-  const debtMonths=sim.months.filter(m=>m.phase==="debt");
-  const totalIntPaid=sim.milestones.reduce((s,l)=>s+l.totalInterest,0);
-  const incomeNow=netS(raquelBruto)+netS(erwinBruto)+vaRaquel+vaErwin;
-  const fixedNow=calcFixedNoLoanAtMonth(fixedExps,0);
-  const surplusNow=Math.max(0,incomeNow-fixedNow-livingMin);
+    function ExpenseEditor({exps,onChange}){
+      const totalNow=exps.reduce((s,e)=>s+e.val,0);
+      const total2034=calcTotalFixedAtMonth(exps,108);
 
-  const tabs=[
-    {id:"inputs",l:"INPUTS"},
-    {id:"gastos",l:"GASTOS"},
-    {id:"resumo",l:"RESUMO"},
-    {id:"orcamento",l:"ORÇAMENTO"},
-    {id:"projecao",l:"PROJEÇÃO"},
-    {id:"marcos",l:"MARCOS"},
-    {id:"patrimonio",l:"PATRIMÔNIO"},
-    {id:"analise",l:"ANÁLISE"},
-  ];
+      return (
+        <div>
+          <div className="mini-table">
+            {exps.map((exp,idx)=>{
+              const upd=(field,val)=>{
+                const cp=[...exps];
+                cp[idx]={...cp[idx],[field]:val};
+                onChange(cp);
+              };
 
-  const Lb=({children,accent})=>React.createElement('div',{className:"disp",style:{fontSize:10,color:accent||"var(--neon)",letterSpacing:2,marginBottom:12,display:"flex",alignItems:"center",gap:8,textTransform:"uppercase"}},
-    React.createElement('span',{style:{width:10,height:10,background:accent||"var(--neon)",clipPath:"polygon(0 0,100% 0,100% 50%,50% 100%,0 50%)",display:"inline-block"}}),
-    children
-  );
+              return (
+                <div key={exp.id} className="row-item">
+                  <div style={{
+                    display:"flex",
+                    justifyContent:"space-between",
+                    gap:12,
+                    alignItems:"center",
+                    marginBottom:10
+                  }}>
+                    <strong className="disp" style={{
+                      fontSize:11,
+                      color:exp.isLoan?"var(--cyan)":"var(--teal)"
+                    }}>
+                      {exp.name} {exp.isLoan&&<span className="badge badge-cyan">pool</span>}
+                    </strong>
 
-  const KV=({label,value,color})=>React.createElement('div',{className:"kv-card",style:{borderLeftColor:color||"var(--neon)"}},
-    React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1.5,marginBottom:4}},label),
-    React.createElement('div',{className:"mono",style:{fontSize:14,fontWeight:800,color:color||"var(--text)"}},value)
-  );
+                    <span className="mono" style={{fontSize:11,color:"var(--text-soft)"}}>
+                      2034: <b style={{color:"var(--teal)"}}>{brl(calcExpense(exp,108))}</b>
+                    </span>
+                  </div>
 
-  return React.createElement('div',{className:"fade-up"},
+                  <div className="inp-row">
+                    <Inp value={exp.val} onChange={v=>upd("val",v)} prefix="R$" small />
+                    <Inp value={exp.growthRate} onChange={v=>upd("growthRate",v)} step="0.1" hint="crescimento anual %" small />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-    /* ═══════ HEADER (like poster) ═══════ */
-    React.createElement('header',{style:{marginBottom:16,position:"relative"}},
-      // ON/OFF strip
-      React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}},
-        React.createElement('div',{className:"onoff-label"},
-          React.createElement('span',{className:"dot"}),
-          "SYS.ONLINE"
-        ),
-        React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},
-          "// KLEIN.FIN.v2.60"
-        )
-      ),
-      // Big hero
-      React.createElement('div',{style:{background:"linear-gradient(135deg,#1a1f22 0%,#12171a 100%)",border:"1px solid var(--line)",padding:"24px 20px",position:"relative",clipPath:"polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px)",overflow:"hidden"}},
-        // Decorative circuit lines
-        React.createElement('svg',{style:{position:"absolute",top:8,right:8,opacity:.4,pointerEvents:"none"},width:"80",height:"80",viewBox:"0 0 80 80"},
-          React.createElement('circle',{cx:"60",cy:"20",r:"3",fill:"var(--neon)"}),
-          React.createElement('circle',{cx:"20",cy:"60",r:"2",fill:"var(--neon)"}),
-          React.createElement('path',{d:"M60 20 L60 40 L30 40 L30 60 L20 60",stroke:"var(--neon)",strokeWidth:"1",fill:"none"}),
-          React.createElement('path',{d:"M10 10 L40 10 L40 25",stroke:"var(--neon-dim)",strokeWidth:"1",fill:"none"})
-        ),
-        React.createElement('div',{className:"hero-title"},
-          "FIN",React.createElement('span',{className:"accent"},"ANCE"),React.createElement('br'),
-          "KLEIN ",React.createElement('span',{style:{color:"var(--text-dim)"}},"//")
-        ),
-        React.createElement('div',{className:"hero-sub"},"DA DÍVIDA AO PATRIMÔNIO"),
-        React.createElement('div',{style:{marginTop:14,display:"flex",alignItems:"center",gap:10,paddingTop:12,borderTop:"1px dashed var(--line)"}},
-          React.createElement('span',{className:"live-dot"}),
-          React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--neon)",fontWeight:600}},"REAL-TIME.COMPUTE"),
-          React.createElement('span',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginLeft:"auto"}},"2026 → 2060")
-        )
-      )
-    ),
+          <div className="stat-grid" style={{
+            gridTemplateColumns:"1fr 1fr",
+            marginTop:14,
+            marginBottom:0
+          }}>
+            <KV label="TOTAL.NOW" value={brl(totalNow)} />
+            <KV label="TOTAL.2034" value={brl(total2034)} />
+          </div>
+        </div>
+      );
+    }
 
-    /* ═══════ NAV TABS ═══════ */
-    React.createElement('div',{className:"tab-scroll"},
-      tabs.map(t=>React.createElement('button',{key:t.id,onClick:()=>setTab(t.id),className:"tech-btn"+(tab===t.id?" active":"")},t.l))
-    ),
+    function App(){
+      const [raquelIncome,setRaquelIncome]=useState(3600);
+      const [erwinIncome,setErwinIncome]=useState(3000);
+      const [foodIncome,setFoodIncome]=useState(1866);
+      const [otherIncome,setOtherIncome]=useState(0);
+      const [initialPool,setInitialPool]=useState(14000);
 
-    /* ══════════════ INPUTS ══════════════ */
-    tab==="inputs"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{className:"panel panel-neon"},
-        React.createElement(Lb,null,"[01] RENDA.BRUTA.ATUAL"),
-        React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"SAL.BRUTO.RAQUEL",value:raquelBruto,onChange:setRaquelBruto,hint:`NET: ${R$(netS(raquelBruto))}`,prefix:"R$"}),
-          React.createElement(Inp,{label:"SAL.BRUTO.ERWIN",value:erwinBruto,onChange:setErwinBruto,hint:`NET: ${R$(netS(erwinBruto))}`,prefix:"R$"})
-        ),
-        React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"VA.RAQUEL",value:vaRaquel,onChange:setVaRaquel,prefix:"R$"}),
-          React.createElement(Inp,{label:"VA.ERWIN",value:vaErwin,onChange:setVaErwin,prefix:"R$"})
-        ),
-        React.createElement(Inp,{label:"PPR.RAQUEL.MULT",value:pprMultiplier,onChange:setPprMultiplier,hint:`PPR bruto: ${R$(raquelBruto*pprMultiplier)} → Net: ${R$(netPPR(raquelBruto*pprMultiplier))} [ABR]`,step:"0.1"})
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,{accent:"var(--cyan)"},"[02] PROJEÇÃO.2034 // 40.ANOS"),
-        React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"META.RAQUEL.2034",value:raquelTarget,onChange:setRaquelTarget,hint:`NET: ${R$(netS(raquelTarget))}`,prefix:"R$"}),
-          React.createElement(Inp,{label:"META.ERWIN.2034",value:erwinTarget,onChange:setErwinTarget,hint:`NET: ${R$(netS(erwinTarget))}`,prefix:"R$"})
-        ),
-        React.createElement('div',{style:{background:"var(--bg2)",padding:12,marginTop:6,border:"1px solid var(--line)",borderLeft:"3px solid var(--cyan)"}},
-          React.createElement('div',{className:"disp",style:{fontSize:9,color:"var(--cyan)",letterSpacing:2,marginBottom:8}},">> CRESC.LINEAR[60m]"),
-          React.createElement('div',{className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}},
-            React.createElement('span',{style:{color:"var(--text-dim)"}},"RAQUEL ",R$(raquelBruto)," → ",R$(raquelTarget)),
-            React.createElement('span',{style:{color:"var(--neon)",fontWeight:700}},"+",((raquelTarget/Math.max(raquelBruto,1)-1)*100).toFixed(0),"%")
-          ),
-          React.createElement('div',{className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:11}},
-            React.createElement('span',{style:{color:"var(--text-dim)"}},"ERWIN  ",R$(erwinBruto)," → ",R$(erwinTarget)),
-            React.createElement('span',{style:{color:"var(--neon)",fontWeight:700}},"+",((erwinTarget/Math.max(erwinBruto,1)-1)*100).toFixed(0),"%")
-          )
-        )
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,{accent:"var(--amber)"},"[03] FII + LIVING.RESERVE"),
-        React.createElement('div',{className:'inp-row'},
-          React.createElement(Inp,{label:"DY.FII.MENSAL",value:fiiRate,onChange:setFiiRate,hint:`≈ ${((Math.pow(1+fiiRate/100,12)-1)*100).toFixed(1)}% a.a.`,step:"0.01"}),
-          React.createElement(Inp,{label:"RESERVA.VIVER",value:livingMin,onChange:setLivingMin,hint:"Buffer pós-gastos fixos",prefix:"R$"})
-        )
-      ),
+      const [pprNet,setPprNet]=useState(Math.round(netPPR(10500*4.5)));
+      const [raquelTarget,setRaquelTarget]=useState(Math.round(netS(14000)));
+      const [erwinTarget,setErwinTarget]=useState(Math.round(netS(6300)));
+      const [foodTarget,setFoodTarget]=useState(2500);
 
-      React.createElement('div',{className:"divider-tech"},
-        React.createElement('div',{className:"dot"}),
-        React.createElement('div',{className:"line"}),
-        React.createElement('div',{className:"txt"},"LIVE.PREVIEW"),
-        React.createElement('div',{className:"line"}),
-        React.createElement('div',{className:"dot"})
-      ),
-      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}},
-        [{l:"RENDA.LIQUIDA",v:R$(incomeNow),c:"var(--neon)"},
-         {l:"GASTOS.FIXOS",v:R$(fixedNow),c:"var(--amber)"},
-         {l:"RES.VIVER",v:R$(livingMin),c:"var(--text)"},
-         {l:"SOBRA>POOL",v:R$(surplusNow),c:"var(--cyan)"},
-         {l:"DIVIDA.TOTAL",v:R$(origDebt),c:"var(--red)"},
-         {l:"LIVRE.EM",v:debtFreeLabel,c:"var(--neon)"},
-         {l:"PATRIM.2034",v:inv2034?R$(inv2034.portfolio):"—",c:"var(--cyan)"},
-         {l:"REND.2034/m",v:inv2034?R$(inv2034.yield_):"—",c:"var(--neon)"}].map((x,i)=>
-          React.createElement(KV,{key:i,label:x.l,value:x.v,color:x.c})
-        )
-      )
-    ),
+      const [fiiRate,setFiiRate]=useState(0.88);
+      const [livingMin,setLivingMin]=useState(4000);
+      const [fixedExps,setFixedExps]=useState(FIXED_EXP_DEF);
 
-    /* ══════════════ GASTOS ══════════════ */
-    tab==="gastos"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,{accent:"var(--amber)"},"GASTOS.FIXOS + GROWTH"),
-        React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginBottom:12,lineHeight:1.6}},"// Valor atual + taxa de crescimento anual por item"),
-        React.createElement(ExpenseEditor,{exps:fixedExps,onChange:setFixedExps})
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"PROJ.TEMPORAL"),
-        [2026,2028,2030,2032,2034,2040,2050,2060].map(yr2=>{
-          const mo=(yr2-2026)*12;
-          const tot=calcTotalFixedAtMonth(fixedExps,mo);
-          const max=calcTotalFixedAtMonth(fixedExps,408);
-          return React.createElement('div',{key:yr2,style:{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:"1px solid var(--line)"}},
-            React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,width:40,flexShrink:0,color:"var(--neon)"}},yr2),
-            React.createElement('div',{className:"progress",style:{flex:1}},
-              React.createElement('div',{className:"progress-fill",style:{width:Math.min(100,tot/max*100)+"%"}})
-            ),
-            React.createElement('span',{className:"mono",style:{fontSize:11,color:"var(--text)",fontWeight:700,width:100,textAlign:"right",flexShrink:0}},R$(tot))
-          );
-        })
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"DETALHE.ITEM.2034"),
-        fixedExps.map((e,i)=>React.createElement('div',{key:e.id,className:"row-item",style:{display:"flex",justifyContent:"space-between",alignItems:"center",borderLeftColor:e.isLoan?"var(--cyan)":"var(--line)",borderLeftWidth:"3px",borderLeftStyle:"solid"}},
-          React.createElement('div',null,
-            React.createElement('div',{className:"disp",style:{fontSize:10,color:e.isLoan?"var(--cyan)":"var(--text)",letterSpacing:1}},e.name),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},e.growthRate>0?`+${e.growthRate}%/a`:"FLAT")
-          ),
-          React.createElement('div',{style:{textAlign:"right"}},
-            React.createElement('div',{className:"mono",style:{fontSize:11,fontWeight:700,color:"var(--neon)"}},R$(calcExpense(e,108))),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},"now: ",R$(e.val))
-          )
-        ))
-      )
-    ),
+      const [tab,setTab]=useState("inputs");
+      const [yr,setYr]=useState(2026);
+      const [exp,setExp]=useState(null);
 
-    /* ══════════════ RESUMO ══════════════ */
-    tab==="resumo"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{className:"panel panel-red"},
-        React.createElement(Lb,{accent:"var(--red)"},"[FASE.01] QUITAÇÃO.DIVIDAS"),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-          React.createElement('div',null,
-            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#ff9b9b",letterSpacing:2}},"DIVIDA.TOTAL"),
-            React.createElement('div',{className:"mono",style:{fontSize:24,fontWeight:800,color:"#fff"}},R$(origDebt))
-          ),
-          React.createElement('div',{style:{textAlign:"right"}},
-            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#ff9b9b",letterSpacing:2}},"LIVRE.EM"),
-            React.createElement('div',{className:"disp",style:{fontSize:20,fontWeight:900,color:"var(--neon)"}},debtFreeLabel),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"#ff9b9b"}},debtMonths.length,"m")
-          )
-        )
-      ),
-      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}},
-        [{l:"POOL.INICIAL",v:"R$ 14.440,24",c:"var(--cyan)"},
-         {l:"JUROS.TOTAIS",v:R$(totalIntPaid),c:"var(--amber)"},
-         {l:"PARC.MAI/26",v:R$(M1.totalPmt),c:"var(--red)"},
-         {l:"P/VIVER",v:R$(livingMin),c:"var(--text)"}].map((x,i)=>React.createElement(KV,{key:i,label:x.l,value:x.v,color:x.c}))
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"EMPRESTIMOS.ORDER[QUIT]"),
-        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,className:"row-item",style:{display:"flex",alignItems:"center",gap:10}},
-          React.createElement('div',{className:"disp",style:{width:28,height:28,background:"var(--neon)",color:"var(--bg)",fontSize:11,fontWeight:900,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,clipPath:"polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)"}},i+1),
-          React.createElement('div',{style:{flex:1,minWidth:0}},
-            React.createElement('div',{className:"disp",style:{fontSize:10,fontWeight:700,color:l.color,letterSpacing:1}},l.name," ",React.createElement('span',{style:{color:"var(--text-faint)",fontSize:8}},"[",l.owner,"]")),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},l.rate,"%/m · ",R$(l.bal))
-          ),
-          React.createElement('div',{style:{textAlign:"right",flexShrink:0}},
-            React.createElement('div',{className:"mono",style:{fontSize:11,fontWeight:800,color:"var(--neon)"}},l.paidOffLabel),
-            React.createElement('div',{className:"mono",style:{fontSize:8,color:"var(--amber)"}},"J: ",R$(l.totalInterest))
-          )
-        ))
-      ),
-      React.createElement('div',{className:"divider-tech"},
-        React.createElement('div',{className:"dot"}),
-        React.createElement('div',{className:"line"}),
-        React.createElement('div',{className:"txt"},"FASE.02.BEGIN"),
-        React.createElement('div',{className:"line"}),
-        React.createElement('div',{className:"dot"})
-      ),
-      React.createElement('div',{className:"panel panel-cyan"},
-        React.createElement(Lb,{accent:"var(--cyan)"},"[FASE.02] CONSTR.PATRIMÔNIO"),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-          React.createElement('div',null,
-            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#7fdfd0",letterSpacing:2}},"PATRIM.2034"),
-            React.createElement('div',{className:"mono",style:{fontSize:22,fontWeight:800,color:"#fff"}},inv2034?R$(inv2034.portfolio):"—")
-          ),
-          React.createElement('div',{style:{textAlign:"right"}},
-            React.createElement('div',{className:"disp",style:{fontSize:9,color:"#7fdfd0",letterSpacing:2}},"REND.FII/m"),
-            React.createElement('div',{className:"mono",style:{fontSize:18,fontWeight:800,color:"var(--neon)"}},inv2034?R$(inv2034.yield_):"—")
-          )
-        )
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"EVOL.2028→2034"),
-        [2028,2029,2030,2031,2032,2033,2034].map(y=>{
-          const dec=investMonths.filter(m=>m.y===y).pop();
-          if(!dec)return null;
-          return React.createElement('div',{key:y,style:{display:"grid",gridTemplateColumns:"40px 1fr 1fr 1fr",gap:8,padding:"8px 0",borderBottom:"1px solid var(--line)",alignItems:"center"}},
-            React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:"var(--neon)"}},y),
-            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--text)",fontWeight:700,textAlign:"right"}},R$(dec.portfolio)),
-            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--cyan)",textAlign:"right"}},R$(dec.yield_)),
-            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--amber)",fontWeight:700,textAlign:"right"}},R$(dec.spendPower))
-          );
-        })
-      )
-    ),
+      const growthMonths=60;
 
-    /* ══════════════ ORÇAMENTO ══════════════ */
-    tab==="orcamento"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"ENTRADAS.MAI/26"),
-        [{n:"SAL.RAQUEL.NET",sub:"bruto: "+R$(raquelBruto),v:netS(raquelBruto),c:"var(--neon)"},
-         {n:"VA.RAQUEL",v:vaRaquel,c:"var(--neon-dim)"},
-         {n:"SAL.ERWIN.NET",sub:"bruto: "+R$(erwinBruto),v:netS(erwinBruto),c:"var(--cyan)"},
-         {n:"VA.ERWIN",v:vaErwin,c:"var(--cyan)"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid var(--line)"}},
-          React.createElement('div',null,
-            React.createElement('div',{className:"disp",style:{fontSize:10,color:"var(--text)",letterSpacing:1}},e.n),
-            e.sub&&React.createElement('div',{className:"mono",style:{fontSize:8,color:"var(--text-faint)"}},e.sub)
-          ),
-          React.createElement('span',{className:"mono",style:{fontSize:12,fontWeight:700,color:e.c}},R$(e.v))
-        )),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"10px 0 0",marginTop:6,borderTop:"2px solid var(--neon)"}},
-          React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:800,letterSpacing:2,color:"var(--neon)"}},"> TOTAL"),
-          React.createElement('span',{className:"mono",style:{fontSize:16,fontWeight:800,color:"var(--neon)"}},R$(incomeNow))
-        )
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,{accent:"var(--amber)"},"GASTOS.FIXOS.MAI/26"),
-        fixedExps.map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid var(--line)"}},
-          React.createElement('div',null,
-            React.createElement('span',{className:"disp",style:{fontSize:10,color:e.isLoan?"var(--cyan)":"var(--text)",letterSpacing:1}},e.name,e.isLoan?" [POOL]":""),
-            e.growthRate>0&&React.createElement('span',{className:"mono",style:{fontSize:8,color:"var(--text-faint)",marginLeft:6}},"+",e.growthRate,"%/a")
-          ),
-          React.createElement('span',{className:"mono",style:{fontSize:12,fontWeight:700,color:e.isLoan?"var(--cyan)":"var(--amber)"}},R$(e.val))
-        )),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",padding:"10px 0 0",marginTop:6,borderTop:"2px solid var(--amber)"}},
-          React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:800,letterSpacing:2,color:"var(--amber)"}},"> TOTAL"),
-          React.createElement('span',{className:"mono",style:{fontSize:16,fontWeight:800,color:"var(--amber)"}},R$(fixedExps.reduce((s,e)=>s+e.val,0)))
-        )
-      ),
-      React.createElement('div',{className:"panel panel-neon"},
-        React.createElement(Lb,null,"FLUXO.MENSAL"),
-        [{n:"+ RENDA.LIQUIDA",v:incomeNow,c:"var(--neon)"},
-         {n:"- GASTOS.FIXOS",v:fixedNow,c:"var(--amber)"},
-         {n:"- P/VIVER",v:livingMin,c:"var(--text)"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"5px 0"}},
-          React.createElement('span',{className:"mono",style:{fontSize:11,color:e.c}},e.n),
-          React.createElement('span',{className:"mono",style:{fontSize:13,fontWeight:700,color:e.c}},R$(e.v))
-        )),
-        React.createElement('div',{style:{height:2,background:"var(--neon)",margin:"10px 0",boxShadow:"0 0 8px var(--neon)"}}),
-        React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"baseline"}},
-          React.createElement('span',{className:"disp",style:{fontSize:12,fontWeight:800,letterSpacing:2,color:"var(--text)"}},"= SOBRA>POOL"),
-          React.createElement('span',{className:"mono",style:{fontSize:22,fontWeight:800,color:"var(--neon)"}},R$(surplusNow))
-        )
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"RECEITAS.EXTRAS>POOL"),
-        [{n:"13°.RAQUEL",v:netS(raquelBruto),p:"DEZ"},
-         {n:"13°.ERWIN",v:netS(erwinBruto),p:"DEZ"},
-         {n:`PPR.RAQUEL ~${pprMultiplier}x`,v:netPPR(raquelBruto*pprMultiplier),p:"ABR [2027+]"}].map((e,i)=>React.createElement('div',{key:i,style:{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid var(--line)"}},
-          React.createElement('div',null,
-            React.createElement('div',{className:"disp",style:{fontSize:10,fontWeight:600,letterSpacing:1}},e.n),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},e.p)
-          ),
-          React.createElement('span',{className:"mono",style:{fontSize:13,fontWeight:700,color:"var(--cyan)"}},R$(e.v))
-        ))
-      )
-    ),
+      const params=useMemo(()=>({
+        raquelIncome,
+        erwinIncome,
+        foodIncome,
+        otherIncome,
+        pprNet,
+        raquelTarget,
+        erwinTarget,
+        foodTarget,
+        growthMonths,
+        fiiRate:fiiRate/100,
+        livingMin,
+        fixedExps,
+        initialPool
+      }),[
+        raquelIncome,
+        erwinIncome,
+        foodIncome,
+        otherIncome,
+        pprNet,
+        raquelTarget,
+        erwinTarget,
+        foodTarget,
+        fiiRate,
+        livingMin,
+        fixedExps,
+        initialPool
+      ]);
 
-    /* ══════════════ PROJEÇÃO ══════════════ */
-    tab==="projecao"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{className:"panel",style:{padding:12}},
-        React.createElement('div',{style:{display:"flex",gap:5,flexWrap:"wrap"}},
-          yrs.map(y=>React.createElement('button',{key:y,onClick:()=>setYr(y),className:"tech-btn"+(yr===y?" active":""),style:{padding:"6px 10px",fontSize:10}},y))
-        )
-      ),
-      sim.months.filter(r=>r.y===yr).map(row=>{
-        const isE=exp===row.k;const dp=origDebt>0?Math.max(0,row.totalDebt/origDebt*100):0;
-        const isInv=row.phase==="invest";
-        return React.createElement('div',{key:row.k,onClick:()=>setExp(isE?null:row.k),className:"row-item"+(isE?" active":""),style:{cursor:"pointer",borderLeftColor:isInv?"var(--neon)":"var(--red)",borderLeftWidth:"3px",borderLeftStyle:"solid",background:isInv?"#0e1809":"var(--bg2)"}},
-          React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-            React.createElement('div',null,
-              React.createElement('span',{className:"disp",style:{fontSize:12,fontWeight:700,color:"var(--text)",letterSpacing:1}},row.label),
-              React.createElement('span',{className:"badge "+(isInv?"badge-neon":"badge-red"),style:{marginLeft:8}},isInv?"INVEST":"DIVIDA"),
-              row.lumpLbl&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",marginTop:3,fontWeight:700}},"★ ",row.lumpLbl)
-            ),
-            React.createElement('div',{style:{textAlign:"right"}},
-              isInv?React.createElement(React.Fragment,null,
-                React.createElement('div',{className:"mono",style:{fontSize:13,fontWeight:800,color:"var(--neon)"}},R$(row.portfolio)),
-                React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)"}},"r: ",R$(row.yield_))
-              ):React.createElement(React.Fragment,null,
-                React.createElement('div',{className:"mono",style:{fontSize:13,fontWeight:800,color:row.active>0?"var(--red)":"var(--neon)"}},row.active>0?R$(row.totalDebt):"✓ LIVRE!"),
-                React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",fontWeight:700}},"pool: ",R$(row.pool))
-              )
-            )
-          ),
-          !isInv&&React.createElement('div',{className:"progress",style:{margin:"8px 0",height:4}},
-            React.createElement('div',{className:"progress-fill",style:{width:dp+"%"}})
-          ),
-          React.createElement('div',{className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:9,color:"var(--text-faint)",flexWrap:"wrap",gap:4}},
-            isInv?React.createElement(React.Fragment,null,
-              React.createElement('span',{style:{color:"var(--neon)"}},"viver: ",R$(row.halfLiving)),
-              React.createElement('span',{style:{color:"var(--cyan)"}},"fii: ",R$(row.halfInvest)),
-              React.createElement('span',{style:{color:"var(--amber)",fontWeight:700}},"poder: ",R$(row.spendPower))
-            ):React.createElement(React.Fragment,null,
-              React.createElement('span',null,"parc: ",R$(row.totalPmt)),
-              React.createElement('span',{style:{color:"var(--cyan)"}},"+pool: ",R$(row.surp)),
-              React.createElement('span',null,"viver: ",R$(row.liv)),
-              row.lumpAmort>0&&React.createElement('span',{style:{color:"var(--neon)",fontWeight:700}},"amort: ",R$(row.lumpAmort))
-            )
-          ),
-          isE&&React.createElement('div',{style:{marginTop:10,paddingTop:10,borderTop:"1px dashed var(--line)",fontSize:10}},
-            React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}},
-              React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"RENDA.LIQ"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--neon)"}},R$(row.income))),
-              React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"GASTOS"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--amber)"}},R$(row.fixedNoLoan))),
-              isInv?React.createElement(React.Fragment,null,
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"SOBRA"),React.createElement('br'),React.createElement('strong',{className:"mono"},R$(row.income-row.fixedNoLoan))),
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"REND.FII"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.yield_))),
-                React.createElement('div',{style:{gridColumn:"1/-1",background:"linear-gradient(135deg,#1a2008,#2d3a0a)",border:"1px solid var(--neon)",padding:10,textAlign:"center",clipPath:"polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)"}},
-                  React.createElement('div',{className:"disp",style:{fontSize:9,color:"var(--neon-dim)",letterSpacing:2}},"PODER.COMPRA/m"),
-                  React.createElement('div',{className:"mono",style:{fontSize:20,fontWeight:800,color:"var(--neon)",margin:"4px 0"}},R$(row.spendPower)),
-                  React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-dim)"}},R$(row.halfLiving)," viver + ",R$(row.halfInvest)," FII")
-                ),
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"PATRIM"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.portfolio))),
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"APORTE"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--neon)"}},R$(row.contribution)))
-              ):React.createElement(React.Fragment,null,
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--text-faint)",letterSpacing:1}},"P/VIVER"),React.createElement('br'),React.createElement('strong',{className:"mono"},R$(row.liv))),
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--cyan)",letterSpacing:1}},"SOBRA>POOL"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.surp))),
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--red)",letterSpacing:1}},"PARC"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--red)"}},R$(row.totalPmt))),
-                React.createElement('div',null,React.createElement('span',{className:"disp",style:{fontSize:8,color:"var(--cyan)",letterSpacing:1}},"POOL.FINAL"),React.createElement('br'),React.createElement('strong',{className:"mono",style:{color:"var(--cyan)"}},R$(row.pool)))
-              )
-            ),
-            row.lumpSum>0&&React.createElement('div',{style:{background:"#1a2008",padding:8,marginBottom:8,border:"1px solid var(--neon-dim)"}},
-              React.createElement('div',{className:"mono",style:{color:"var(--neon)",fontWeight:700}},"★ ",R$(row.lumpSum)," → ",isInv?"FIIs":"Pool"),
-              !isInv&&row.lumpAmort>0&&React.createElement('div',{className:"mono",style:{color:"var(--cyan)",fontSize:9}},"excesso>amort: ",R$(row.lumpAmort))
-            ),
-            row.amortDet.length>0&&React.createElement('div',{style:{marginBottom:8}},
-              React.createElement('div',{className:"disp",style:{fontSize:9,fontWeight:700,color:"var(--cyan)",marginBottom:4,letterSpacing:1.5}},"AMORTIZAÇÕES:"),
-              row.amortDet.map((a,i)=>React.createElement('div',{key:i,className:"mono",style:{color:a.color,fontSize:10}},"→ ",a.name,": ",R$(a.amount),sim.milestones.find(ml=>ml.id===a.id)?.paidOffMonth===row.k?" ✓ QUIT!":""))
-            ),
-            !isInv&&row.loanDet.filter(l=>l.bal>0.5).length>0&&React.createElement('div',null,
-              React.createElement('div',{className:"disp",style:{fontSize:9,fontWeight:700,color:"var(--text-dim)",marginBottom:4,letterSpacing:1.5}},"SALDOS:"),
-              row.loanDet.filter(l=>l.bal>0.5).map((l,i)=>React.createElement('div',{key:i,className:"mono",style:{display:"flex",justifyContent:"space-between",fontSize:10}},
-                React.createElement('span',{style:{color:l.color}},l.name),
-                React.createElement('span',{style:{color:"var(--text-dim)"}},R$(l.bal))
-              ))
-            )
-          )
-        );
-      })
-    ),
+      const sim=useMemo(()=>runSim(params),[params]);
 
-    /* ══════════════ MARCOS ══════════════ */
-    tab==="marcos"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"QUITAÇÃO.TIMELINE"),
-        sim.milestones.map((l,i)=>React.createElement('div',{key:l.id,style:{display:"flex",gap:10,marginBottom:14}},
-          React.createElement('div',{style:{display:"flex",flexDirection:"column",alignItems:"center",flexShrink:0}},
-            React.createElement('div',{className:"disp",style:{width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",background:"var(--neon)",color:"var(--bg)",fontSize:11,fontWeight:900,clipPath:"polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)"}},i+1),
-            i<sim.milestones.length-1&&React.createElement('div',{style:{width:2,flex:1,minHeight:14,background:"var(--neon-dim)",marginTop:2}})
-          ),
-          React.createElement('div',{style:{flex:1,paddingTop:2}},
-            React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-              React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:l.color,letterSpacing:1}},l.name),
-              React.createElement('span',{className:"mono",style:{fontSize:11,fontWeight:800,color:"var(--neon)"}},l.paidOffLabel)
-            ),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginTop:2}},l.owner," · ",l.rate,"% · ",R$(l.bal)),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--amber)"}},"juros: ",R$(l.totalInterest))
-          )
-        ))
-      ),
-      React.createElement('div',{className:"panel panel-neon"},
-        React.createElement(Lb,null,"JORNADA.MILESTONES"),
-        (()=>{
-          const evts=[];
-          sim.months.forEach(m=>{if(m.phase==="debt"&&m.amortDet.length>0)evts.push(m);});
-          const dfm=sim.months.find(m=>m.phase==="invest");if(dfm)evts.push({...dfm,evt:"FREE"});
-          if(inv2034)evts.push({...inv2034,evt:"40"});
-          if(inv2060)evts.push({...inv2060,evt:"60"});
-          return evts.slice(0,20).map((m,i)=>React.createElement('div',{key:i,style:{padding:"8px 0",borderBottom:"1px solid var(--line)"}},
-            React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-              React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,letterSpacing:1,color:"var(--text)"}},m.label),
-              m.evt==="FREE"&&React.createElement('span',{className:"badge badge-neon"},"🎉 LIVRE!"),
-              m.evt==="40"&&React.createElement('span',{className:"badge badge-cyan"},"🎯 40.ANOS"),
-              m.evt==="60"&&React.createElement('span',{className:"badge badge-neon"},"🏖️ APOSENT"),
-              !m.evt&&React.createElement('span',{className:"mono",style:{fontSize:9,color:"var(--text-faint)"}},m.active," empr")
-            ),
-            m.lumpAmort>0&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",marginTop:2}},"amortizou ",R$(m.lumpAmort)),
-            m.evt==="FREE"&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--neon)",marginTop:2}},"pool→invest: ",R$(m.portfolio)),
-            (m.evt==="40"||m.evt==="60")&&React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)",marginTop:2}},"patrim: ",R$(m.portfolio)," · rend: ",R$(m.yield_),"/m · poder: ",R$(m.spendPower),"/m")
-          ));
-        })()
-      )
-    ),
+      const M1=sim.months[0]||{};
+      const debtFreeLabel=sim.debtFreeK?fm(...fk(sim.debtFreeK)):"—";
+      const yrs=[...new Set(sim.months.map(r=>r.y))];
+      const origDebt=LOANS_DEF.reduce((s,l)=>s+l.bal,0);
+      const investMonths=sim.months.filter(m=>m.phase==="invest");
+      const debtMonths=sim.months.filter(m=>m.phase==="debt");
+      const inv2034=investMonths.filter(m=>m.y<=2034).pop();
+      const inv2060=investMonths[investMonths.length-1];
+      const totalIntPaid=sim.milestones.reduce((s,l)=>s+l.totalInterest,0);
+      const incomeNow=raquelIncome+erwinIncome+foodIncome+otherIncome;
+      const fixedNow=calcFixedNoLoanAtMonth(fixedExps,0);
+      const totalFixedNow=fixedExps.reduce((s,e)=>s+e.val,0);
+      const surplusNow=Math.max(0,incomeNow-fixedNow-livingMin);
+      const breakMonth=sim.months.find(m=>m.phase==="debt"&&m.pool<0);
 
-    /* ══════════════ PATRIMÔNIO ══════════════ */
-    tab==="patrimonio"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}},
-        React.createElement('div',{className:"panel panel-cyan",style:{margin:0,padding:14}},
-          React.createElement('div',{className:"disp",style:{fontSize:8,color:"#7fdfd0",letterSpacing:2}},"2034 // 40.ANOS"),
-          React.createElement('div',{className:"mono",style:{fontSize:18,fontWeight:800,color:"#fff",margin:"6px 0"}},inv2034?R$(inv2034.portfolio):"—"),
-          React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--neon)"}},"rend: ",inv2034?R$(inv2034.yield_):"—","/m")
-        ),
-        React.createElement('div',{className:"panel panel-neon",style:{margin:0,padding:14}},
-          React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:2}},"2060 // APOSENT"),
-          React.createElement('div',{className:"mono",style:{fontSize:18,fontWeight:800,color:"#fff",margin:"6px 0"}},inv2060?R$(inv2060.portfolio):"—"),
-          React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--cyan)"}},"rend: ",inv2060?R$(inv2060.yield_):"—","/m")
-        )
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,null,"PODER.COMPRA.ANUAL"),
-        investMonths.filter((_,i)=>i%12===11||i===investMonths.length-1).map((m,i)=>
-          React.createElement('div',{key:i,style:{display:"grid",gridTemplateColumns:"40px 1fr 1fr 1fr",gap:8,padding:"8px 0",borderBottom:"1px solid var(--line)",alignItems:"center"}},
-            React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:"var(--neon)"}},m.y),
-            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--text)",fontWeight:700,textAlign:"right"}},R$(m.portfolio)),
-            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--cyan)",textAlign:"right"}},R$(m.yield_)),
-            React.createElement('span',{className:"mono",style:{fontSize:10,color:"var(--amber)",fontWeight:700,textAlign:"right"}},R$(m.spendPower))
-          )
-        )
-      )
-    ),
+      const tabs=[
+        {id:"inputs",l:"Inputs"},
+        {id:"gastos",l:"Gastos"},
+        {id:"resumo",l:"Resumo"},
+        {id:"orcamento",l:"Orçamento"},
+        {id:"projecao",l:"Projeção"},
+        {id:"marcos",l:"Marcos"},
+        {id:"patrimonio",l:"Patrimônio"},
+        {id:"analise",l:"Análise"}
+      ];
 
-    /* ══════════════ ANÁLISE ══════════════ */
-    tab==="analise"&&React.createElement(React.Fragment,null,
-      React.createElement('div',{className:"panel panel-neon"},
-        React.createElement(Lb,null,"PARECER.FINAL"),
-        React.createElement('div',{style:{fontSize:12,color:"var(--text-dim)",lineHeight:1.8,fontFamily:"'Rajdhani',sans-serif"}},
-          React.createElement('p',{style:{margin:"0 0 10px"}},
-            React.createElement('strong',{className:"disp",style:{color:"var(--red)",fontSize:10,letterSpacing:1.5}},"DIVIDAS // "),
-            R$(origDebt)," quitados em ",debtMonths.length," meses (",debtFreeLabel,"). Juros totais: ",R$(totalIntPaid),"."
-          ),
-          React.createElement('p',{style:{margin:"0 0 10px"}},
-            React.createElement('strong',{className:"disp",style:{color:"var(--amber)",fontSize:10,letterSpacing:1.5}},"GASTOS // "),
-            "Atuais ",R$(fixedExps.reduce((s,e)=>s+e.val,0)),"/m. Em 2034: ",R$(calcTotalFixedAtMonth(fixedExps,108)),"/m."
-          ),
-          React.createElement('p',{style:{margin:"0 0 10px"}},
-            React.createElement('strong',{className:"disp",style:{color:"var(--cyan)",fontSize:10,letterSpacing:1.5}},"POOL // "),
-            "Sobra mensal + PPR + 13° entram. Parcelas saem."
-          ),
-          React.createElement('p',{style:{margin:"0 0 10px"}},
-            React.createElement('strong',{className:"disp",style:{color:"var(--neon)",fontSize:10,letterSpacing:1.5}},"40.ANOS // "),
-            "Patrimônio ",inv2034?R$(inv2034.portfolio):"—"," gerando ",inv2034?R$(inv2034.yield_):"—","/m. Poder: ",inv2034?R$(inv2034.spendPower):"—","/m."
-          ),
-          React.createElement('p',{style:{margin:0}},
-            React.createElement('strong',{className:"disp",style:{color:"var(--neon)",fontSize:10,letterSpacing:1.5}},"APOSENT // "),
-            "Patrim ",inv2060?R$(inv2060.portfolio):"—"," gerando ",inv2060?R$(inv2060.yield_):"—","/m."
-          )
-        )
-      ),
-      React.createElement('div',{className:"panel"},
-        React.createElement(Lb,{accent:"var(--red)"},"RANKING.CUSTO"),
-        LOANS_DEF.filter(l=>l.rate>0.5).sort((a,b)=>b.rate-a.rate).map((l,i)=>{
-          const ms=sim.milestones.find(m=>m.id===l.id);
-          return React.createElement('div',{key:l.id,className:"row-item",style:{borderLeftColor:l.color,borderLeftWidth:"3px",borderLeftStyle:"solid"}},
-            React.createElement('div',{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-              React.createElement('span',{className:"disp",style:{fontSize:11,fontWeight:700,color:l.color,letterSpacing:1}},"#",i+1," ",l.name),
-              React.createElement('span',{className:"mono",style:{fontSize:12,fontWeight:700,color:"var(--red)"}},l.rate,"%")
-            ),
-            React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",marginTop:3}},"juros: ",R$(ms?.totalInterest||0)," · quit: ",ms?.paidOffLabel)
-          );
-        })
-      )
-    ),
+      return (
+        <div className="app-shell">
+          <div className="topbar">
+            <div className="nav-pill disp">
+              <span>Menu</span>
+              <span className="active">Home</span>
+              <span>Finance</span>
+              <span>Save</span>
+              <span>About</span>
+              <span>Account</span>
+              <span>☰</span>
+            </div>
 
-    /* ══════════════ FOOTER ══════════════ */
-    React.createElement('div',{style:{textAlign:"center",padding:"20px 0 10px",borderTop:"1px dashed var(--line)",marginTop:20}},
-      React.createElement('div',{className:"mono",style:{fontSize:9,color:"var(--text-faint)",letterSpacing:2}},
-        "// POOL.SYS · FII: ",fiiRate,"%/m · INSS+IRRF // SIM: MAI.26 → DEZ.60"
-      ),
-      React.createElement('div',{className:"disp",style:{fontSize:8,color:"var(--neon-dim)",letterSpacing:3,marginTop:6}},
-        "> KLEIN.FINANCE.SYSTEM.ACTIVE"
-      )
-    )
-  );
-}
+            <div className="profile-pill">
+              <div className="profile-icon">K</div>
+              <div className="profile-text">
+                Klein_Finance
+                <small>pool active</small>
+              </div>
+            </div>
+          </div>
 
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
-</script>
+          <div className="hero-grid">
+            <section className="hero">
+              <div className="search-pill mono">
+                <span>Search... // MAI.2026</span>
+                <span>🎙️ 📷</span>
+              </div>
 
+              <div className="hero-kicker disp">
+                Painel financeiro / família Klein
+              </div>
+
+              <h1 className="hero-title">
+                KLEIN
+                <span className="thin">DA DÍVIDA AO PATRIMÔNIO</span>
+                FINANCE
+              </h1>
+
+              <div className="hero-actions">
+                <button className="ghost-cta">POOL: {brl(initialPool)}</button>
+                <button className="solid-cta">ACCOUNTING</button>
+              </div>
+            </section>
+
+            <aside className="info-card">
+              <button className="get-started">Get Started</button>
+              <h2>Maio/2026 como ponto zero.</h2>
+              <p>
+                Entradas líquidas configuradas: Erwin {brl(erwinIncome)}, Raquel {brl(raquelIncome)}
+                e alimentação {brl(foodIncome)}. A simulação usa a pool inicial de {brl(initialPool)}.
+              </p>
+              <div className="info-arrow">→</div>
+            </aside>
+          </div>
+
+          <div className="tab-scroll">
+            {tabs.map(t=>(
+              <button
+                key={t.id}
+                onClick={()=>setTab(t.id)}
+                className={"tech-btn "+(tab===t.id?"active":"")}
+              >
+                {t.l}
+              </button>
+            ))}
+          </div>
+
+          {tab==="inputs"&&(
+            <>
+              <div className="stat-grid">
+                <KV label="Renda recebida" value={brl(incomeNow)} />
+                <KV label="Gastos fixos" value={brl(fixedNow)} />
+                <KV label="Pool inicial" value={brl(initialPool)} />
+                <KV label="Livre em" value={debtFreeLabel} color={breakMonth?"var(--red)":"var(--teal)"} />
+              </div>
+
+              <section className="panel">
+                <SectionTitle icon="+">[01] Entradas reais recebidas</SectionTitle>
+
+                <div className="inp-row">
+                  <Inp label="RAQUEL.RECEBIDO" value={raquelIncome} onChange={setRaquelIncome} prefix="R$" hint="valor líquido mensal informado" />
+                  <Inp label="ERWIN.RECEBIDO" value={erwinIncome} onChange={setErwinIncome} prefix="R$" hint="valor líquido mensal informado" />
+                </div>
+
+                <div className="inp-row">
+                  <Inp label="ALIMENTAÇÃO.RAQUEL" value={foodIncome} onChange={setFoodIncome} prefix="R$" hint="benefício/alimentação recebido" />
+                  <Inp label="OUTRAS.ENTRADAS" value={otherIncome} onChange={setOtherIncome} prefix="R$" hint="extra mensal recorrente" />
+                </div>
+
+                <div className="inp-row">
+                  <Inp label="POOL.INICIAL" value={initialPool} onChange={setInitialPool} prefix="R$" hint="maio/2026 começa com este caixa" />
+                  <Inp label="PPR.LÍQ.ESTIMADO" value={pprNet} onChange={setPprNet} prefix="R$" hint="entra em abril a partir de 2027" />
+                </div>
+              </section>
+
+              <section className="panel panel-light">
+                <SectionTitle icon="⌂">[02] Metas líquidas até 2034</SectionTitle>
+
+                <div className="inp-row">
+                  <Inp label="META.RAQUEL.2034" value={raquelTarget} onChange={setRaquelTarget} prefix="R$" hint="crescimento linear em 60 meses" />
+                  <Inp label="META.ERWIN.2034" value={erwinTarget} onChange={setErwinTarget} prefix="R$" hint="crescimento linear em 60 meses" />
+                </div>
+
+                <div className="inp-row">
+                  <Inp label="META.ALIMENTAÇÃO.2034" value={foodTarget} onChange={setFoodTarget} prefix="R$" hint="benefício futuro estimado" />
+                  <Inp label="DY.FII.MENSAL" value={fiiRate} onChange={setFiiRate} step="0.01" hint={`aprox. ${((Math.pow(1+fiiRate/100,12)-1)*100).toFixed(1)}% a.a.`} />
+                </div>
+
+                <Inp label="RESERVA.PARA.VIVER" value={livingMin} onChange={setLivingMin} prefix="R$" hint="mínimo desejado depois dos gastos fixos" />
+              </section>
+
+              <div className="stat-grid">
+                <KV label="Sobra > pool" value={brl(surplusNow)} />
+                <KV label="Parc. maio/26" value={brl(M1.totalPmt)} color="var(--red)" />
+                <KV label="Pool fim maio" value={brl(M1.pool)} color={M1.pool<0?"var(--red)":"var(--teal)"} />
+                <KV label="Ponto crítico" value={breakMonth?breakMonth.label:"sem ruptura"} color={breakMonth?"var(--red)":"var(--green)"} />
+              </div>
+            </>
+          )}
+
+          {tab==="gastos"&&(
+            <>
+              <section className="panel panel-light">
+                <SectionTitle icon="≡">Gastos fixos + crescimento</SectionTitle>
+                <ExpenseEditor exps={fixedExps} onChange={setFixedExps}/>
+              </section>
+
+              <section className="panel">
+                <SectionTitle icon="↗">Projeção temporal</SectionTitle>
+                {[2026,2028,2030,2032,2034,2040,2050,2060].map(yr2=>{
+                  const mo=(yr2-2026)*12;
+                  const tot=calcTotalFixedAtMonth(fixedExps,mo);
+                  const max=calcTotalFixedAtMonth(fixedExps,408);
+
+                  return (
+                    <div key={yr2} className="line-row">
+                      <span className="disp">{yr2}</span>
+                      <div className="progress" style={{flex:1}}>
+                        <div className="progress-fill" style={{width:Math.min(100,tot/max*100)+"%"}} />
+                      </div>
+                      <strong>{brl(tot)}</strong>
+                    </div>
+                  );
+                })}
+              </section>
+            </>
+          )}
+
+          {tab==="resumo"&&(
+            <>
+              <section className={"panel "+(breakMonth?"warning":"good")}>
+                <SectionTitle icon="!">Fase 01 // quitação das dívidas</SectionTitle>
+
+                <div className="two-col">
+                  <div>
+                    <div className="disp" style={{fontSize:12,opacity:.75}}>DÍVIDA.TOTAL</div>
+                    <div className="mono" style={{fontSize:28,fontWeight:900}}>{brl(origDebt)}</div>
+                  </div>
+
+                  <div style={{textAlign:"right"}}>
+                    <div className="disp" style={{fontSize:12,opacity:.75}}>STATUS</div>
+                    <div className="mono" style={{fontSize:24,fontWeight:900}}>
+                      {breakMonth?`ROMPE EM ${breakMonth.label}`:debtFreeLabel}
+                    </div>
+                    <small className="mono">{debtMonths.length} meses em fase dívida</small>
+                  </div>
+                </div>
+              </section>
+
+              <div className="stat-grid">
+                <KV label="Pool inicial" value={brl(initialPool)} />
+                <KV label="Juros totais" value={brl(totalIntPaid)} color="var(--amber)" />
+                <KV label="Parcela mai/26" value={brl(M1.totalPmt)} color="var(--red)" />
+                <KV label="P/viver" value={brl(livingMin)} />
+              </div>
+
+              <section className="panel panel-light">
+                <SectionTitle icon="✓">Empréstimos // ordem de quitação</SectionTitle>
+
+                {sim.milestones.map((l,i)=>(
+                  <div key={l.id} className="row-item">
+                    <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center"}}>
+                      <div>
+                        <span className="badge">#{i+1}</span>{" "}
+                        <strong className="disp" style={{fontSize:12,color:l.color}}>
+                          {l.name}
+                        </strong>
+                        <div className="mono muted" style={{fontSize:10,marginTop:4}}>
+                          {l.owner} · {l.rate}%/m · saldo inicial {brl(l.bal)}
+                        </div>
+                      </div>
+
+                      <div style={{textAlign:"right"}}>
+                        <strong className="mono" style={{color:"var(--teal)"}}>
+                          {l.paidOffLabel}
+                        </strong>
+                        <div className="mono" style={{fontSize:10,color:"var(--amber)"}}>
+                          J: {brl(l.totalInterest)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </section>
+            </>
+          )}
+
+          {tab==="orcamento"&&(
+            <div className="two-col">
+              <section className="panel">
+                <SectionTitle icon="↑">Entradas // maio 2026</SectionTitle>
+
+                {[
+                  ["RAQUEL",raquelIncome,"valor líquido"],
+                  ["ERWIN",erwinIncome,"valor líquido"],
+                  ["ALIMENTAÇÃO",foodIncome,"benefício"],
+                  ["OUTRAS",otherIncome,"recorrente"]
+                ].map(([n,v,s])=>(
+                  <div key={n} className="line-row">
+                    <div>
+                      <strong className="disp">{n}</strong>
+                      <small>{s}</small>
+                    </div>
+                    <strong>{brl(v)}</strong>
+                  </div>
+                ))}
+
+                <div className="line-row" style={{borderBottom:0,paddingTop:16}}>
+                  <strong className="disp">TOTAL</strong>
+                  <strong style={{fontSize:18}}>{brl(incomeNow)}</strong>
+                </div>
+              </section>
+
+              <section className="panel panel-light">
+                <SectionTitle icon="↓">Saídas // maio 2026</SectionTitle>
+
+                {fixedExps.map(e=>(
+                  <div key={e.id} className="line-row">
+                    <div>
+                      <strong className="disp" style={{fontSize:11,color:e.isLoan?"var(--cyan)":"var(--teal)"}}>
+                        {e.name}
+                      </strong>
+                      <small>{e.growthRate>0?`+${e.growthRate}%/a`:"flat"}</small>
+                    </div>
+                    <strong>{brl(e.val)}</strong>
+                  </div>
+                ))}
+
+                <div className="line-row" style={{borderBottom:0,paddingTop:16}}>
+                  <strong className="disp">TOTAL</strong>
+                  <strong style={{fontSize:18}}>{brl(totalFixedNow)}</strong>
+                </div>
+              </section>
+
+              <section className="panel panel-cyan" style={{gridColumn:"1/-1"}}>
+                <SectionTitle icon="=">Fluxo mensal real</SectionTitle>
+
+                <div className="three-col">
+                  <KV label="Renda" value={brl(incomeNow)} />
+                  <KV label="Fixos sem dívidas" value={brl(fixedNow)} />
+                  <KV
+                    label="Sobra antes das dívidas"
+                    value={brl(incomeNow-fixedNow)}
+                    color={(incomeNow-fixedNow)<0?"var(--red)":"var(--teal)"}
+                  />
+                </div>
+              </section>
+            </div>
+          )}
+
+          {tab==="projecao"&&(
+            <>
+              <section className="panel panel-light">
+                <SectionTitle icon="▦">Escolha o ano</SectionTitle>
+                <div className="year-grid">
+                  {yrs.map(y=>(
+                    <button
+                      key={y}
+                      onClick={()=>setYr(y)}
+                      className={"tech-btn "+(yr===y?"active":"")}
+                    >
+                      {y}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {sim.months.filter(r=>r.y===yr).map(row=>{
+                const isE=exp===row.k;
+                const isInv=row.phase==="invest";
+                const dp=origDebt>0?Math.max(0,row.totalDebt/origDebt*100):0;
+
+                return (
+                  <div
+                    key={row.k}
+                    onClick={()=>setExp(isE?null:row.k)}
+                    className="row-item"
+                    style={{
+                      cursor:"pointer",
+                      borderColor:row.critical?"var(--red)":isInv?"var(--green)":"rgba(0,77,75,.12)"
+                    }}
+                  >
+                    <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center"}}>
+                      <div>
+                        <strong className="disp" style={{fontSize:14}}>{row.label}</strong>{" "}
+                        <span className={"badge "+(isInv?"badge-neon":row.critical?"badge-red":"")}>
+                          {isInv?"INVEST":"DÍVIDA"}
+                        </span>
+
+                        {row.lumpLbl&&(
+                          <div className="mono" style={{fontSize:10,color:"var(--cyan)",marginTop:4}}>
+                            ★ {row.lumpLbl}
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{textAlign:"right"}}>
+                        {isInv?(
+                          <>
+                            <strong className="mono" style={{fontSize:15,color:"var(--teal)"}}>
+                              {brl(row.portfolio)}
+                            </strong>
+                            <div className="mono muted" style={{fontSize:10}}>
+                              r: {brl(row.yield_)}
+                            </div>
+                          </>
+                        ):(
+                          <>
+                            <strong className="mono" style={{fontSize:15,color:row.critical?"var(--red)":"var(--teal)"}}>
+                              {brl(row.totalDebt)}
+                            </strong>
+                            <div className="mono muted" style={{fontSize:10}}>
+                              pool: {brl(row.pool)}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {!isInv&&(
+                      <div className="progress" style={{margin:"12px 0 8px"}}>
+                        <div className="progress-fill" style={{width:dp+"%"}} />
+                      </div>
+                    )}
+
+                    <div className="mono" style={{
+                      display:"flex",
+                      justifyContent:"space-between",
+                      gap:10,
+                      flexWrap:"wrap",
+                      fontSize:11,
+                      color:"var(--text-dim)"
+                    }}>
+                      {isInv?(
+                        <>
+                          <span>viver: {brl(row.halfLiving)}</span>
+                          <span>fii: {brl(row.halfInvest)}</span>
+                          <span>poder: {brl(row.spendPower)}</span>
+                        </>
+                      ):(
+                        <>
+                          <span>parc: {brl(row.totalPmt)}</span>
+                          <span>+pool: {brl(row.surp)}</span>
+                          <span>viver: {brl(row.liv)}</span>
+                          {row.lumpAmort>0&&<span>amort: {brl(row.lumpAmort)}</span>}
+                        </>
+                      )}
+                    </div>
+
+                    {isE&&<div className="divider-pill" />}
+
+                    {isE&&(
+                      <div className="three-col">
+                        <KV label="Renda" value={brl(row.income)} />
+                        <KV label="Gastos" value={brl(row.fixedNoLoan)} />
+                        {isInv?(
+                          <KV label="Rendimento FII" value={brl(row.yield_)} />
+                        ):(
+                          <KV label="Pool final" value={brl(row.pool)} color={row.pool<0?"var(--red)":"var(--teal)"} />
+                        )}
+                      </div>
+                    )}
+
+                    {isE&&row.amortDet.length>0&&(
+                      <div style={{marginTop:12}}>
+                        {row.amortDet.map(a=>(
+                          <div key={a.id} className="mono" style={{fontSize:11,color:a.color}}>
+                            → {a.name}: {brl(a.amount)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </>
+          )}
+
+          {tab==="marcos"&&(
+            <>
+              <section className="panel panel-light">
+                <SectionTitle icon="⌁">Timeline de quitação</SectionTitle>
+
+                {sim.milestones.map((l,i)=>(
+                  <div key={l.id} className="row-item">
+                    <div style={{display:"flex",gap:14,alignItems:"center"}}>
+                      <span className="badge">{i+1}</span>
+
+                      <div style={{flex:1}}>
+                        <strong className="disp" style={{fontSize:12,color:l.color}}>
+                          {l.name}
+                        </strong>
+                        <div className="mono muted" style={{fontSize:10}}>
+                          {l.owner} · {l.rate}%/m · {brl(l.bal)}
+                        </div>
+                      </div>
+
+                      <strong className="mono">{l.paidOffLabel}</strong>
+                    </div>
+                  </div>
+                ))}
+              </section>
+
+              <section className="panel">
+                <SectionTitle icon="★">Eventos relevantes</SectionTitle>
+
+                {sim.months.filter(m=>m.phase==="debt"&&m.amortDet.length>0).slice(0,18).map(m=>(
+                  <div key={m.k} className="line-row">
+                    <strong className="disp">{m.label}</strong>
+                    <span className="mono">amortizou {brl(m.lumpAmort)}</span>
+                  </div>
+                ))}
+
+                {investMonths[0]&&(
+                  <div className="line-row">
+                    <strong className="disp">{investMonths[0].label}</strong>
+                    <span className="badge badge-neon">início patrimônio</span>
+                  </div>
+                )}
+              </section>
+            </>
+          )}
+
+          {tab==="patrimonio"&&(
+            <>
+              <div className="stat-grid">
+                <KV label="Patrimônio 2034" value={inv2034?brl(inv2034.portfolio):"—"} />
+                <KV label="Rendimento 2034/m" value={inv2034?brl(inv2034.yield_):"—"} />
+                <KV label="Patrimônio 2060" value={inv2060?brl(inv2060.portfolio):"—"} />
+                <KV label="Rendimento 2060/m" value={inv2060?brl(inv2060.yield_):"—"} />
+              </div>
+
+              <section className="panel panel-light">
+                <SectionTitle icon="∞">Poder de compra anual</SectionTitle>
+
+                {investMonths.filter((_,i)=>i%12===11||i===investMonths.length-1).map((m,i)=>(
+                  <div key={i} className="line-row">
+                    <strong className="disp">{m.y}</strong>
+                    <span className="mono">{brl(m.portfolio)}</span>
+                    <span className="mono">r: {brl(m.yield_)}</span>
+                    <span className="mono">poder: {brl(m.spendPower)}</span>
+                  </div>
+                ))}
+
+                {investMonths.length===0&&(
+                  <p className="mono muted">
+                    A fase de investimento ainda não começa com os parâmetros atuais.
+                  </p>
+                )}
+              </section>
+            </>
+          )}
+
+          {tab==="analise"&&(
+            <>
+              <section className="panel panel-light">
+                <SectionTitle icon="?">Parecer final</SectionTitle>
+
+                <p style={{fontSize:18,lineHeight:1.35,fontWeight:600}}>
+                  Com a renda atual de <strong>{brl(incomeNow)}</strong>, os gastos fixos sem dívidas ficam em{" "}
+                  <strong>{brl(fixedNow)}</strong>. A sobra antes das dívidas é{" "}
+                  <strong>{brl(incomeNow-fixedNow)}</strong>; depois de reservar {brl(livingMin)} para viver,
+                  a sobra para a pool é <strong>{brl(surplusNow)}</strong>.
+                </p>
+
+                <div className="divider-pill" />
+
+                <p style={{fontSize:18,lineHeight:1.35,fontWeight:600}}>
+                  Em maio/2026, a pool sai de <strong>{brl(initialPool)}</strong> para{" "}
+                  <strong style={{color:M1.pool<0?"var(--red)":"var(--teal)"}}>
+                    {brl(M1.pool)}
+                  </strong>.{" "}
+                  {breakMonth?(
+                    <>
+                      O plano rompe em <strong style={{color:"var(--red)"}}>{breakMonth.label}</strong>{" "}
+                      se nenhuma entrada extra ou corte for feito.
+                    </>
+                  ):(
+                    <>
+                      Com os parâmetros atuais, a dívida fica livre em <strong>{debtFreeLabel}</strong>.
+                    </>
+                  )}
+                </p>
+              </section>
+
+              <section className="panel">
+                <SectionTitle icon="⚑">Ranking de custo</SectionTitle>
+
+                {LOANS_DEF.filter(l=>l.rate>0.5).sort((a,b)=>b.rate-a.rate).map((l,i)=>{
+                  const ms=sim.milestones.find(m=>m.id===l.id);
+
+                  return (
+                    <div key={l.id} className="row-item">
+                      <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center"}}>
+                        <div>
+                          <strong className="disp" style={{fontSize:12,color:l.color}}>
+                            #{i+1} {l.name}
+                          </strong>
+                          <div className="mono muted" style={{fontSize:10,marginTop:4}}>
+                            taxa: {l.rate}%/m · saldo inicial: {brl(l.bal)}
+                          </div>
+                        </div>
+
+                        <div style={{textAlign:"right"}}>
+                          <strong className="mono" style={{color:"var(--red)"}}>
+                            {brl(ms?.totalInterest||0)}
+                          </strong>
+                          <div className="mono muted" style={{fontSize:10}}>
+                            quit: {ms?.paidOffLabel || "—"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </section>
+            </>
+          )}
+
+          <footer className="footer">
+            special collaboration · klein finance · maio 2026 → dezembro 2060
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
